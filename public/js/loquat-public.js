@@ -31,4 +31,37 @@
 
 console.log('# Loading loquat')
 
+var session = {
+  currentPage: {}
+}
+
+$('document').ready(function() {
+  session.currentPage = getPageData()
+
+  window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
+  window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
+
+  console.log(session.currentPage)
+  console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
+
+})
+
+function getPageData() {
+  var type
+
+  if( $('body').hasClass('single-product') ) {
+    type = 'single-product'
+  }
+
+  else {
+    type = ''
+  }
+
+  return {
+    url: window.location.pathname + window.location.search,
+    type: type,
+    timestamp: new Date()
+  }
+}
+
 })( jQuery );
