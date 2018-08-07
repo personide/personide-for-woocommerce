@@ -1,67 +1,76 @@
 (function( $ ) {
 	'use strict';
 
-	/**
-	 * All of the code for your public-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
+  console.log('# Loading loquat')
 
-console.log('# Loading loquat')
+  config = {
+    host: 'localhost',
+    port: '7070'
+    endpoint: '/events.json?accessKey=',
+    accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
+  }
 
-var session = {
-  currentPage: {}
-}
+  event_server_url = config.host + ':' + config.port + config.endpoint + config.accessKey
 
-$('document').ready(function() {
+  dispatch = {
+    newUser = function(id, props) {
+      var data = {
+        event: '$set',
+        entityType: 'user',
+        entityId: id,
+        properties: props,
+        eventTime: new Date()
+      }
+
+      $.ajax({
+        url: event_server_url,
+        method: 'POST',
+        data: data
+      })
+    },
+  }
+
+  var session = {
+    currentPage: {},
+    uid: null
+  }
+
+  $('document').ready(function() {
+    session.uid = window.localStorage.getItem('LQT-UID')
+    if(session.uid === null) {
+    session.uid = '' // call generate
+  }
+
   session.currentPage = getPageData()
 
   window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
   window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
 
-  console.log(session.currentPage)
-  console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
+  // console.log(session.currentPage)
+  // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
+
+  if (session.currentPage.type == 'single-product') {
+    // event: view
+  }
 
 })
 
-function getPageData() {
-  var type
+  function getPageData() {
+    var type
 
-  if( $('body').hasClass('single-product') ) {
-    type = 'single-product'
-  }
+    if( $('body').hasClass('single-product') ) {
+      type = 'single-product'
+    }
 
-  else {
-    type = ''
-  }
+    else {
+      type = ''
+    }
 
-  return {
-    url: window.location.pathname + window.location.search,
-    type: type,
-    timestamp: new Date()
+    return {
+      url: window.location.pathname + window.location.search,
+      type: type,
+      timestamp: new Date()
+    }
   }
-}
 
 })( jQuery );

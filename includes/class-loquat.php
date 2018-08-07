@@ -67,8 +67,8 @@ class Loquat {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+		if ( defined( 'LOQUAT_VERSION' ) ) {
+			$this->version = LOQUAT_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -79,6 +79,7 @@ class Loquat {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
+		// add_action( 'init', array($this, 'register_session') );
 	}
 
 	/**
@@ -157,6 +158,10 @@ class Loquat {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
+		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'product_diff', 1, 3);
+		// $this->loader->add_action( '', $plugin_admin, 'product_update' );
+		// $this->loader->add_action( 'wp_trash_post', $plugin_admin, 'product_trash' );
 	}
 
 	/**
@@ -216,3 +221,18 @@ class Loquat {
 	}
 
 }
+
+echo session_id();
+
+if(!session_id()) {
+		session_start();
+	}
+
+
+function register_session() {
+	if(!session_id()) {
+		session_start();
+	}
+}
+
+add_action( 'init', 'register_session');

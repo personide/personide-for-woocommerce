@@ -1,5 +1,4 @@
 (function( $ ) {
-	'use strict';
 
 	/**
 	 * All of the code for your admin-facing JavaScript source
@@ -28,5 +27,40 @@
 	 * Although scripts in the WordPress core, Plugins and Themes may be
 	 * practising this, we should strive to set a better example in our own work.
 	 */
+
+  config = {
+    api_url: 'http://localhost:9001'
+  }
+
+  lib = {
+
+    newProduct: function(payload, callback) {
+      console.log(payload)
+      // payload = JSON.parse(payload)
+      $.ajax({
+        url: config.api_url + '/products',
+        method: 'POST',
+        data: payload,
+        success: callback
+      })
+    },
+
+    deleteProdcut: function(id, callback) {
+      callback()
+    },
+
+    updateProduct: function(payload, callback) {
+
+      var id = payload.id
+      delete payload.id
+
+      $.ajax({
+        url: config.api_url + '/products' + '?' + 'id=' + id,
+        method: 'PUT',
+        data: payload,
+        success: callback
+      })
+    }
+  }
 
 })( jQuery );
