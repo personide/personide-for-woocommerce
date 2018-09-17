@@ -74,15 +74,21 @@ function populateWidget(name, id) {
   }
 
   $('document').ready(function() {
-    session.uid = window.localStorage.getItem('LQT-UID')
+    
+
+    
+    session.uid = window.localStorage.getItem('LQT_UID')
     if(session.uid === null) {
-      session.uid = ''
+
+      console.log('# New User Visiting')
+      session.uid = uuidv4()
+      window.localStorage.setItem('LQT_UID', session.uid)
+
+      document.cookie = "LQT_UID="+ session.uid +"; expires=31 Dec 2029 23:59:59 GMT"
     }
 
-    session.currentPage = getPageData()
-
-    window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
-    window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
+    // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
+    // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
 
     // console.log(session.currentPage)
     // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
@@ -108,3 +114,10 @@ function populateWidget(name, id) {
   }
 
 })( jQuery );
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}

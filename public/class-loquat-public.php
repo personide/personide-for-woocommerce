@@ -53,6 +53,7 @@ class Loquat_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->logger = wc_get_logger();
+		$this->current_user_id = $_COOKIE['LQT_UID'];
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-util.php';
 	}
@@ -117,7 +118,7 @@ class Loquat_Public {
 
 			wc_enqueue_js( "console.log('Viewing Product: $name')" );
 
-			$event_object = Loquat_Util::get_event( 'view', "user", 0, NULL, 'item', $product->get_id());
+			$event_object = Loquat_Util::get_event( 'view', "user", $this->current_user_id, NULL, 'item', $product->get_id());
 
 			// $this->logger->debug( $event_object );	
 			wc_enqueue_js( "dispatch($event_object)" );
@@ -132,8 +133,7 @@ class Loquat_Public {
 
 		$properties = array();
 
-		$user_id = 'alksdal';
-		$event_object = Loquat_Util::get_event( 'add-to-cart', 'item', $product->get_id(), json_encode($properties), 'user', $user_id );
+		$event_object = Loquat_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, json_encode($properties), 'item', $product->get_id() );
 		
 		// $this->logger->debug( $event_object );
 		wc_enqueue_js( "console.log($event_object)" );
