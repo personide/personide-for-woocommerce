@@ -32,6 +32,15 @@
     api_url: 'http://localhost:9001'
   }
 
+  config = {
+    host: 'localhost',
+    port: '9000',
+    endpoint: '/events',
+    accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
+  }
+
+  event_server_url = config.host + ':' + config.port + config.endpoint + config.accessKey
+
   lib = {
 
     newProduct: function(payload, callback) {
@@ -61,6 +70,20 @@
         success: callback
       })
     }
+  }
+
+  dispatch = function(data) {
+
+    var timestamp = new Date()
+    timestamp = timestamp.toISOString()
+
+    data = Object.assign(data, {eventTime: timestamp})
+    console.log(data)
+    // $.ajax({
+    //   url: event_server_url,
+    //   method: 'POST',
+    //   data: data
+    // })
   }
 
 })( jQuery );

@@ -55,16 +55,8 @@ class Loquat_Admin {
 		$this->context = array( 'source' => 'loquat' );
 		$this->new_products = array();
 
-		if( !empty($_SESSION['loquat_admin_script']) ) {
-			wc_enqueue_js($_SESSION['loquat_admin_script']);
-		}
-
-		unset($_SESSION['loquat_admin_script']);
-
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-util.php';
 
-		// require_once plugin_dir_path( __FILE__ ) . '../includes/class-loquat-lib.php';
-		// $this->lib = new Loquat_Lib();
 	}
 
 	/**
@@ -113,6 +105,8 @@ class Loquat_Admin {
 
 	}
 
+
+	// @todo remove
 	public function get_payload($product) {
 		$payload = array(
 			'id' => $product->get_id(),
@@ -146,56 +140,55 @@ class Loquat_Admin {
 				
 				$label = '';
 				$product = wc_get_product( $post_id );
-				$payload = $this->get_payload($product);
 
 				$this->logger->debug( print_r( $this->new_products, true) );
 
-				if ( in_array( $payload['id'], $this->new_products ) ) {
-					$code = "
-					lib.newProduct($payload, function(res) {
-						console.log('New product sent to remote', res)
-						})
-						";
-					}
+				$properties = array(
+					'title' => $product->get_title(),
+					'description' => $product->get_description(),
+					'in_stock' => $product->get_stock_status() === 'instock',
+					'regular_price' => $product->get_regular_price(),
+					'sale_price' => $product->get_sale_price(),
+					'categories' => $product->get_category_ids()
+				);
 
-					else {
-						$code = "
-						lib.updateProduct($payload, function(res) {
-							console.log('Product update sent to remote', res)
-						})
-						";
-					}
-
-					Loquat_Util::enqueue_script($code, 'admin');
-
-					$this->logger->debug( "# Update Product: " . $product->get_id() );
+				if ( in_array( $post_id, $this->new_products ) ) {
 				}
+				else {
+				}
+
+				$event_object = Loquat_Util::get_event( '$set', "item", $product->get_id(), json_encode($properties) );
+
+				wc_enqueue_js("dispatch($event_object)");
+
+				$this->logger->debug( "# Adding / Updating Product: " . $product->get_id() );
 			}
 		}
+	}
 
-		public function product_trash($id) {
-			$this->logger->debug( 'Trash Product: ' . $id );
-		}
+	public function product_trash($id) {
+		$this->logger->debug( 'Trash Product: ' . $id );
+	}
 
 
-		public function product_diff($new_status, $old_status, $post) {
+	public function product_diff($new_status, $old_status, $post) {
 
-			if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
+		if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
 
-			$code = '';
+		$code = '';
 
 			// $this->logger->debug( 'Old: ' . $old_status . ', New: ' . $new_status );
 
-			$label = null;
+		$label = null;
 
-			if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
-				$label = 'New Product';
+		if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
+			$label = 'New Product';
 
 			// $req = $this->lib->newProduct($payload);
 
-				array_push( $this->new_products, $post->ID );
+			array_push( $this->new_products, $post->ID );
 
-			}
+		}
 
 
 			// 	if ( $old_status == 'publish' && ( $new_status == 'draft' || $new_status == 'trash' ) ) {
@@ -204,24 +197,27 @@ class Loquat_Admin {
 
 			// 	if( $code !== '' ) $this->enqueue_script($code);
 
-				if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
-			}
+		if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
+	}
 
-			public function enqueue_script($code) {
-				if(empty($_SESSION['loquat_admin_script']))
-					$_SESSION['loquat_admin_script'] = '';
 
-				$_SESSION['loquat_admin_script'] = $_SESSION['loquat_admin_script']."\n\n $code";
-			}
-
-			public function add_menu() {
-				add_menu_page( 'Loquat - Store Personlization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
+	public function add_menu() {
+		add_menu_page( 'Loquat - Store Personlization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
 		// add_options_page( 'Loquat Settings', 'Loquat', 'manage_options', 'loquat', '' );
-			} 
+	} 
 
 
-			public function register_menu() {
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/loquat-admin-display.php';
-			}
+	public function register_menu() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/loquat-admin-display.php';
+	}
 
-		}
+
+	// @todo remove
+	public function enqueue_script($code) {
+		if(empty($_SESSION['loquat_admin_script']))
+			$_SESSION['loquat_admin_script'] = '';
+
+		$_SESSION['loquat_admin_script'] = $_SESSION['loquat_admin_script']."\n\n $code";
+	}
+
+}

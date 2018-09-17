@@ -159,13 +159,15 @@ class Loquat {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
+
+		// Product $set
 		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'product_diff', 1, 3);
-		// $this->loader->add_action( 'save_post_product', $plugin_admin, 'product_save', 1, 3);
 		$this->loader->add_action( 'woocommerce_new_product', $plugin_admin, 'product_add', 1, 1);
-		$this->loader->add_action( 'woocommerce_trasph_product', $plugin_admin, 'product_trash', 1, 1);
 		$this->loader->add_action( 'added_post_meta', $plugin_admin, 'product_update', 1, 4);
 		$this->loader->add_action( 'updated_post_meta', $plugin_admin, 'product_update', 1, 4);
-		
+
+		// product $delete
+		$this->loader->add_action( 'woocommerce_trash_product', $plugin_admin, 'product_trash', 1, 1);
 		// $this->loader->add_action( 'wp_trash_post', $plugin_admin, 'product_trash' );
 	}
 

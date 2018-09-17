@@ -56,11 +56,16 @@ function populateWidget(name, id) {
   }
 
   dispatch = function(data) {
-    $.ajax({
-      url: event_server_url,
-      method: 'POST',
-      data: data
-    })
+
+    var timestamp = new Date()
+    timestamp = timestamp.toISOString()
+    data = Object.assign(data, {eventTime: timestamp})
+    console.log(data)
+    // $.ajax({
+    //   url: event_server_url,
+    //   method: 'POST',
+    //   data: data
+    // })
   }
 
   var session = {
