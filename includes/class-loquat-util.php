@@ -3,7 +3,7 @@
 
 class Loquat_Util {
 
-	public static function get_event($type, $entityType, $entityId, $properties, $targetEntityId = NULL, $targetEntityType = NULL) {
+	public static function get_event($type, $entityType, $entityId, $properties = NULL, $targetEntityType = NULL, $targetEntityId = NULL) {
 		
 		$template = "
 		{
@@ -12,7 +12,7 @@ class Loquat_Util {
 			entityId: '$entityId',
 			" . ( ($targetEntityId !== NULL) ? "targetEntityId: '$targetEntityId'," : "" ) . "
 			" . ( ($targetEntityType !== NULL) ? "targetEntityType: '$targetEntityType'," : "" ) . "
-			properties: $properties
+			" . ( ($properties !== NULL) ? "properties: $properties," : "" ) . "
 		}
 		";
 

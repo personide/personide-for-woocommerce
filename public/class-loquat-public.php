@@ -117,19 +117,9 @@ class Loquat_Public {
 
 			wc_enqueue_js( "console.log('Viewing Product: $name')" );
 
-			$properties = array(
-				'title' => $name,
-				'description' => $product->get_description(),
-				'in_stock' => $product->get_stock_status(),
-				'regular_price' => $product->get_regular_price(),
-				'sale_price' => $product->get_sale_price(),
-				'categories' => $product->get_category_ids()
-			);
+			$event_object = Loquat_Util::get_event( 'view', "user", 0, NULL, 'item', $product->get_id());
 
-			$event_object = Loquat_Util::get_event( '$set', "item", $product->get_id(), json_encode($properties) );
-
-			// $this->logger->debug( $event_object );
-			wc_enqueue_js( "console.log($event_object)" );	
+			// $this->logger->debug( $event_object );	
 			wc_enqueue_js( "dispatch($event_object)" );
 		}
 	}
@@ -143,7 +133,7 @@ class Loquat_Public {
 		$properties = array();
 
 		$user_id = 'alksdal';
-		$event_object = Loquat_Util::get_event( 'add-to-cart', "item", $product->get_id(), json_encode($properties), $user_id, 'user' );
+		$event_object = Loquat_Util::get_event( 'add-to-cart', 'item', $product->get_id(), json_encode($properties), 'user', $user_id );
 		
 		// $this->logger->debug( $event_object );
 		wc_enqueue_js( "console.log($event_object)" );
@@ -159,7 +149,7 @@ class Loquat_Public {
 			'items' => $items
 		);
 
-		$event_object = Loquat_Util::get_event( 'purchase', "item", $order->get_id(), json_encode($properties), 0, 'user' );
+		$event_object = Loquat_Util::get_event( 'purchase', 'user', 0, json_encode($properties), 'items', $order->get_id() );
 
 		$this->logger->debug( print_r($event_object, true) );
 

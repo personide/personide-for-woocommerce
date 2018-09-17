@@ -116,7 +116,7 @@ class Loquat_Admin {
 			'sale_price' => $product->get_sale_price(),
 			'regular_price' => $product->get_regular_price(),
 			'categroies' => array_map(function($id) {
-				return get_term_by( 'id', $id, 'product_cat' )->name;
+				return get_term_by( 'id', $id, 'product_cat' )->slug;
 			}, $product->get_category_ids())
 		);
 
@@ -126,6 +126,7 @@ class Loquat_Admin {
 	}
 
 
+	// @todo remove if unneccessary 
 	public function product_add($id) {
 		$this->logger->debug( 'New Product: ' . $id );
 	}
@@ -136,12 +137,10 @@ class Loquat_Admin {
 
 			if ( get_post_type( $post_id ) == 'product' ) {
 
-				$this->logger->debug( "# " . $meta_key );
+				// $this->logger->debug( "# " . $meta_key );
 				
 				$label = '';
 				$product = wc_get_product( $post_id );
-
-				$this->logger->debug( print_r( $this->new_products, true) );
 
 				$properties = array(
 					'title' => $product->get_title(),
@@ -149,7 +148,9 @@ class Loquat_Admin {
 					'in_stock' => $product->get_stock_status() === 'instock',
 					'regular_price' => $product->get_regular_price(),
 					'sale_price' => $product->get_sale_price(),
-					'categories' => $product->get_category_ids()
+					'categories' => array_map(function($id) {
+						return get_term_by( 'id', $id, 'product_cat' )->slug;
+					}, $product->get_category_ids())
 				);
 
 				if ( in_array( $post_id, $this->new_products ) ) {
@@ -157,17 +158,19 @@ class Loquat_Admin {
 				else {
 				}
 
-				$event_object = Loquat_Util::get_event( '$set', "item", $product->get_id(), json_encode($properties) );
+				$event_object = Loquat_Util::get_event( '$set', 'item', $product->get_id(), json_encode($properties) );
 
 				wc_enqueue_js("dispatch($event_object)");
 
-				$this->logger->debug( "# Adding / Updating Product: " . $product->get_id() );
+				$this->logger->debug( "# Add / Update Product: " . $product->get_id() );
 			}
 		}
 	}
 
 	public function product_trash($id) {
 		$this->logger->debug( 'Trash Product: ' . $id );
+		$event_object = Loquat_Util::get_event( '$delete', 'item', $product->get_id() );
+
 	}
 
 
@@ -177,25 +180,13 @@ class Loquat_Admin {
 
 		$code = '';
 
-			// $this->logger->debug( 'Old: ' . $old_status . ', New: ' . $new_status );
-
 		$label = null;
 
 		if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
+			
 			$label = 'New Product';
-
-			// $req = $this->lib->newProduct($payload);
-
 			array_push( $this->new_products, $post->ID );
-
 		}
-
-
-			// 	if ( $old_status == 'publish' && ( $new_status == 'draft' || $new_status == 'trash' ) ) {
-			// 		$label = 'Delete Product';
-			// 	}
-
-			// 	if( $code !== '' ) $this->enqueue_script($code);
 
 		if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
 	}
