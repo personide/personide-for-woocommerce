@@ -53,12 +53,15 @@ class Loquat_Admin {
 		$this->version = $version;
 		$this->logger = wc_get_logger();
 		$this->context = array( 'source' => 'loquat' );
+		$this->new_products = array();
 
 		if( !empty($_SESSION['loquat_admin_script']) ) {
 			wc_enqueue_js($_SESSION['loquat_admin_script']);
 		}
 
 		unset($_SESSION['loquat_admin_script']);
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-util.php';
 
 		// require_once plugin_dir_path( __FILE__ ) . '../includes/class-loquat-lib.php';
 		// $this->lib = new Loquat_Lib();
@@ -110,89 +113,115 @@ class Loquat_Admin {
 
 	}
 
-
-	public function product_new($id) {
-		$this->logger->debug( 'New Product: ' . $id, $this->context );
-
-	}
-
-	public function product_update($id) {
-		$this->logger->debug( 'Update Product: ' . $id, $this->context );
-	}
-
-	public function product_trash($id) {
-		if(get_post_type($id) !== 'product') {
-			return;
-		}
-		$this->logger->debug( 'Trash Product: ' . $id, $this->context );
-	}	
-
-	public function product_diff($new_status, $old_status, $post) {
-		if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
-
-		$product = wc_get_product($post->ID);
-		$this->logger->debug( "Product Price: " . $product->get_sale_price() );
-		$code = '';
-
-		// $this->logger->debug( 'Old: ' . $old_status . ', New: ' . $new_status );
-
-		$label = null;
-
+	public function get_payload($product) {
 		$payload = array(
-				'id' => $product->get_id(),
-				'sku' => $product->get_sku(),
-				'title' => $product->get_title(),
-				'in_stock' => $product->is_in_stock(),
-				'sale_price' => $product->get_sale_price(),
-				'regular_price' => $product->get_regular_price(),
-				'categroies' => array_map(function($id) {
-					return get_term_by( 'id', $id, 'product_cat' )->name;
-				}, $product->get_category_ids())
-			);
+			'id' => $product->get_id(),
+			'sku' => $product->get_sku(),
+			'title' => $product->get_title(),
+			'in_stock' => $product->is_in_stock(),
+			'sale_price' => $product->get_sale_price(),
+			'regular_price' => $product->get_regular_price(),
+			'categroies' => array_map(function($id) {
+				return get_term_by( 'id', $id, 'product_cat' )->name;
+			}, $product->get_category_ids())
+		);
 
 		$payload = json_encode($payload);
 
-		if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
-			$label = 'New Product';
+		return $payload;
+	}
+
+
+	public function product_add($id) {
+		$this->logger->debug( 'New Product: ' . $id );
+	}
+
+	public function product_update($meta_id, $post_id, $meta_key, $meta_value) {
+
+		if ( $meta_key == '_edit_lock' ) {
+
+			if ( get_post_type( $post_id ) == 'product' ) {
+
+				$this->logger->debug( "# " . $meta_key );
+				
+				$label = '';
+				$product = wc_get_product( $post_id );
+				$payload = $this->get_payload($product);
+
+				$this->logger->debug( print_r( $this->new_products, true) );
+
+				if ( in_array( $payload['id'], $this->new_products ) ) {
+					$code = "
+					lib.newProduct($payload, function(res) {
+						console.log('New product sent to remote', res)
+						})
+						";
+					}
+
+					else {
+						$code = "
+						lib.updateProduct($payload, function(res) {
+							console.log('Product update sent to remote', res)
+						})
+						";
+					}
+
+					Loquat_Util::enqueue_script($code, 'admin');
+
+					$this->logger->debug( "# Update Product: " . $product->get_id() );
+				}
+			}
+		}
+
+		public function product_trash($id) {
+			$this->logger->debug( 'Trash Product: ' . $id );
+		}
+
+
+		public function product_diff($new_status, $old_status, $post) {
+
+			if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
+
+			$code = '';
+
+			// $this->logger->debug( 'Old: ' . $old_status . ', New: ' . $new_status );
+
+			$label = null;
+
+			if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
+				$label = 'New Product';
 
 			// $req = $this->lib->newProduct($payload);
-			$code = "
-				lib.newProduct($payload, function(res) {
-					console.log('Product sent to remote', res)
-					})
-			";
-		}
 
-		if ( $old_status == 'publish' && $new_status == 'publish' ) {
-			$label = 'Update Product';
-			$code = "
-				lib.updateProduct($payload, function(res) {
-					console.log('Product update sent to remote', res)
-					})
-			";
-		}
+				array_push( $this->new_products, $post->ID );
 
-		if ( $old_status == 'publish' && ( $new_status == 'draft' || $new_status == 'trash' ) ) {
-			$label = 'Delete Product';
-		}
+			}
 
-		if( $code !== '' ) $this->enqueue_script($code);
 
-		if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
-	}
+			// 	if ( $old_status == 'publish' && ( $new_status == 'draft' || $new_status == 'trash' ) ) {
+			// 		$label = 'Delete Product';
+			// 	}
 
-	public function enqueue_script($code) {
-		$_SESSION['loquat_admin_script'] = $_SESSION['loquat_admin_script']."\n\n $code";
-	}
+			// 	if( $code !== '' ) $this->enqueue_script($code);
 
-	public function add_menu() {
-		add_menu_page( 'Loquat - Store Personlization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
+				if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
+			}
+
+			public function enqueue_script($code) {
+				if(empty($_SESSION['loquat_admin_script']))
+					$_SESSION['loquat_admin_script'] = '';
+
+				$_SESSION['loquat_admin_script'] = $_SESSION['loquat_admin_script']."\n\n $code";
+			}
+
+			public function add_menu() {
+				add_menu_page( 'Loquat - Store Personlization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
 		// add_options_page( 'Loquat Settings', 'Loquat', 'manage_options', 'loquat', '' );
-	} 
+			} 
 
 
-	public function register_menu() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/loquat-admin-display.php';
-	}
+			public function register_menu() {
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/loquat-admin-display.php';
+			}
 
-}
+		}

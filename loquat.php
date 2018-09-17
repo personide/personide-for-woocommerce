@@ -78,6 +78,8 @@ function run_loquat() {
 	$plugin = new Loquat();
 	$plugin->run();
 
+	// register widget
+
 }
 
 add_action('woocommerce_loaded', 'run_loquat', 0);

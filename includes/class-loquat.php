@@ -160,7 +160,12 @@ class Loquat {
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
 		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'product_diff', 1, 3);
-		// $this->loader->add_action( '', $plugin_admin, 'product_update' );
+		// $this->loader->add_action( 'save_post_product', $plugin_admin, 'product_save', 1, 3);
+		$this->loader->add_action( 'woocommerce_new_product', $plugin_admin, 'product_add', 1, 1);
+		$this->loader->add_action( 'woocommerce_trasph_product', $plugin_admin, 'product_trash', 1, 1);
+		$this->loader->add_action( 'added_post_meta', $plugin_admin, 'product_update', 1, 4);
+		$this->loader->add_action( 'updated_post_meta', $plugin_admin, 'product_update', 1, 4);
+		
 		// $this->loader->add_action( 'wp_trash_post', $plugin_admin, 'product_trash' );
 	}
 
@@ -177,6 +182,12 @@ class Loquat {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load' );
+		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
+		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 1);
+		
+
 
 	}
 
