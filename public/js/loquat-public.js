@@ -60,7 +60,13 @@ function populateWidget(name, id) {
     var timestamp = new Date()
     timestamp = timestamp.toISOString()
     data = Object.assign(data, {eventTime: timestamp})
+    
+    if(data.entityType === 'user') {
+      data = Object.assign(data, {entityId: session.uid})
+    }
+
     console.log(data)
+    
     // $.ajax({
     //   url: event_server_url,
     //   method: 'POST',
@@ -74,17 +80,21 @@ function populateWidget(name, id) {
   }
 
   $('document').ready(function() {
-    
 
-    
     session.uid = window.localStorage.getItem('LQT_UID')
     if(session.uid === null) {
 
       console.log('# New User Visiting')
       session.uid = uuidv4()
       window.localStorage.setItem('LQT_UID', session.uid)
-
       document.cookie = "LQT_UID="+ session.uid +"; expires=31 Dec 2029 23:59:59 GMT"
+
+      dispatch({
+        event: '$set',
+        entityType: 'user',
+        entityId: session.uid
+      })
+
     }
 
     // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))

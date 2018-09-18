@@ -13,3 +13,6 @@
 	background-color: #efefef;
 }
 
+@media screen and (max-width: 320px) {
+	.widget.loquat_recommendations .item {width: 100%;}
+}

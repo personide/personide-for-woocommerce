@@ -53,7 +53,7 @@ class Loquat_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->logger = wc_get_logger();
-		$this->current_user_id = $_COOKIE['LQT_UID'];
+		$this->current_user_id = isset($_COOKIE['LQT_UID']) ? $_COOKIE['LQT_UID'] : '';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-util.php';
 	}
