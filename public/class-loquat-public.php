@@ -118,7 +118,7 @@ class Loquat_Public {
 
 			wc_enqueue_js( "console.log('Viewing Product: $name')" );
 
-			$event_object = Loquat_Util::get_event( 'view', "user", $this->current_user_id, NULL, 'item', $product->get_id());
+			$event_object = Loquat_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
 
 			// $this->logger->debug( $event_object );	
 			wc_enqueue_js( "dispatch($event_object)" );
@@ -131,9 +131,7 @@ class Loquat_Public {
 		$name = $product->get_title();
 		wc_enqueue_js( "console.log('Product going to cart: $name')" );
 
-		$properties = array();
-
-		$event_object = Loquat_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, json_encode($properties), 'item', $product->get_id() );
+		$event_object = Loquat_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
 		
 		// $this->logger->debug( $event_object );
 		wc_enqueue_js( "console.log($event_object)" );
@@ -146,30 +144,13 @@ class Loquat_Public {
 
 		$items = $order->get_items();
 		$properties = array(
-			'items' => $items
+			'items' => array_keys($items)
 		);
 
-		$event_object = Loquat_Util::get_event( 'purchase', 'user', 0, json_encode($properties), 'items', $order->get_id() );
+		$event_object = Loquat_Util::get_event( 'purchase', 'user', $this->current_user_id, json_encode($properties), 'order', $order->get_id() );
 
-		$this->logger->debug( print_r($event_object, true) );
-
-		wc_enqueue_js( "console.log($event_object)" );
-		// wc_enqueue_js( "dispatch($event_object)" );
+		wc_enqueue_js( "dispatch($event_object)" );
 	}
-
-	private function get_event($type, $entityType, $entityId, $properties) {
-		$template = "
-		{
-			event: '$type',
-			entityType: '$entityType',
-			entityId: '$entityId',
-			properties: $properties,
-		}
-		";
-
-		return $template;
-	}
-
 }
 
 
