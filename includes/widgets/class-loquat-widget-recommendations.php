@@ -26,9 +26,10 @@ class Loquat_Widget_Recommendations extends WP_Widget {
 			<div class="container">
 				<h1 class="center">You Must Have</h1>
 				<div class="template item">
-					<div class="picture"></div>
+					<div class="picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
 					<div class="details">
-						<span></span>
+						<p class="name">Jingle Bells</p>
+						<p class="price">Rs. 200</p>
 					</div>
 				</div>
 			</div>
