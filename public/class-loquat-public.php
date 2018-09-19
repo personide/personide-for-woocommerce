@@ -129,12 +129,9 @@ class Loquat_Public {
 
 		$product = wc_get_product( $product_id );
 		$name = $product->get_title();
-		wc_enqueue_js( "console.log('Product going to cart: $name')" );
 
 		$event_object = Loquat_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
 		
-		// $this->logger->debug( $event_object );
-		wc_enqueue_js( "console.log($event_object)" );
 		wc_enqueue_js( "dispatch($event_object)" );
 	}
 

@@ -97,6 +97,19 @@ function populateWidget(name, id) {
 
     }
 
+    $('.add_to_cart_button.ajax_add_to_cart').click(function() {
+      dispatch({
+        event: 'add-to-cart',
+        entityType: 'user',
+        entityId: session.uid,
+        targetEntityType: 'product',
+        targetEntityId: $(this).data('product_id'),
+        properties: {
+          quantity: $(this).data('quantity')
+        }
+      })
+    })
+
     // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
     // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
 
