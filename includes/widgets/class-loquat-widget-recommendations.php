@@ -25,12 +25,14 @@ class Loquat_Widget_Recommendations extends WP_Widget {
 		echo '
 			<div class="container">
 				<h1 class="center">You Must Have</h1>
-				<div class="template item">
-					<div class="picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
-					<div class="details">
-						<p class="name">Jingle Bells</p>
-						<p class="price">Rs. 200</p>
-					</div>
+				<div class="template item loquat-product">
+					<a class="loquat-product__link" href="">
+						<div class="loquat-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
+						<div class="loquat-product__details">
+							<p class="loquat-product__name">Jingle Bells</p>
+							<p class="loquat-product__price">Rs. 200</p>
+						</div>
+					</a>
 				</div>
 			</div>
 		';
