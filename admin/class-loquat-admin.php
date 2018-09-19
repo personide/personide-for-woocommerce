@@ -145,6 +145,7 @@ class Loquat_Admin {
 				$properties = array(
 					'title' => $product->get_title(),
 					'description' => $product->get_description(),
+					'url' => get_permalink($product->get_id()),
 					'in_stock' => $product->get_stock_status() === 'instock',
 					'regular_price' => $product->get_regular_price(),
 					'sale_price' => $product->get_sale_price(),
