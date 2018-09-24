@@ -171,7 +171,6 @@ class Loquat_Admin {
 	public function product_trash($id) {
 		$this->logger->debug( 'Trash Product: ' . $id );
 		$event_object = Loquat_Util::get_event( '$delete', 'item', $product->get_id() );
-
 	}
 
 

@@ -110,6 +110,17 @@ function populateWidget(name, id) {
       })
     })
 
+    $('.woocommerce-cart-form__cart-item .product-remove .remove').click(function() {
+      dispatch({
+        event: 'remove-from-cart',
+        entityType: 'user',
+        entityId: session.uid,
+        targetEntityType: 'product',
+        targetEntityId: $(this).data('product_id'),
+        properties: null
+      })
+    })
+
     // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
     // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
 
