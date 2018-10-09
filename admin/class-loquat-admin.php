@@ -170,6 +170,7 @@ class Loquat_Admin {
 
 	public function product_trash($id) {
 		$this->logger->debug( 'Trash Product: ' . $id );
+		$product = wc_get_product($id);
 		$event_object = Loquat_Util::get_event( '$delete', 'item', $product->get_id() );
 	}
 
@@ -179,7 +180,6 @@ class Loquat_Admin {
 		if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
 
 		$code = '';
-
 		$label = null;
 
 		if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
@@ -195,7 +195,7 @@ class Loquat_Admin {
 	public function add_menu() {
 		add_menu_page( 'Loquat - Store Personlization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
 		// add_options_page( 'Loquat Settings', 'Loquat', 'manage_options', 'loquat', '' );
-	} 
+	}
 
 
 	public function register_menu() {

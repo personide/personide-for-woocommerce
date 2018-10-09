@@ -1,6 +1,23 @@
 
 $ = null
 
+config = {
+  host: 'http://127.0.0.1',
+  services: {
+    event: {
+      port: 9000,
+      endpoint: '/events',
+      accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
+    },
+    recommendation: {
+      port: 5000,
+      endpoints: {
+        default: 'recommended_for_you'
+      }
+    }
+  }
+}
+
 window.onload = function() {
   $ = jQuery
   populateWidget()
@@ -10,15 +27,39 @@ function populateWidget(name, id) {
 
   console.log('# Populating widget')
 
+  var recommendation = config.services.recommendation
+
   $container = $('.widget.loquat_recommendations')
   $template = $container.find('.item.template')
 
-  list = [1,2,3,4]
+  list = []
 
-  list.forEach(function(item) {
-    $item = $template.clone(true, true)
-    $item.removeClass('template')
-    $container.append($item)
+  $.ajax({
+    url: config.host + ':' + recommendation.port + '/' + recommendation.endpoints.default + '/?_id=d7ab6686-729c-4ef8-8f49-b4eedeef4629',
+    method: 'GET',
+    // data: {
+    //   _id: '5b4f826ec0796b52766ab24d'
+    // },
+    success: function(data){
+      console.log(data)
+
+      data.forEach(function(item) {
+        $item = $template.clone(true, true)
+        $item.removeClass('template')
+
+        // item.url = item.url.replace('https://www.goto.com.pk/', 'localhost/store/?product=')
+
+        $item.find('.loquat-product__picture').css('background-image', 'url('+item.image_url+')')
+        $item.find('.loquat-product__name').text(item.title)
+        $item.find('.loquat-product__link').attr('href', item.url)
+        $item.find('.loquat-product__price').text('Rs. '+item.sale_price)
+        $container.append($item)
+        console.log(item)
+      })
+    },
+    error: function(xhr, err) {
+      console.log(err)
+    }
   })
 }
 
@@ -27,33 +68,7 @@ function populateWidget(name, id) {
 
   console.log('# Loading loquat')
 
-  config = {
-    host: 'localhost',
-    port: '9000',
-    endpoint: '/events',
-    accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
-  }
-
-  event_server_url = config.host + ':' + config.port + config.endpoint + config.accessKey
-
-  dispatch_old = {
-    newUser: function(id, props) {
-      var data = {
-        event: '$set',
-        entityType: 'user',
-        entityId: id,
-        properties: props,
-        eventTime: new Date()
-      }
-
-      $.ajax({
-        url: event_server_url,
-        method: 'POST',
-        data: data
-      })
-    },
-
-  }
+  event_server_url = config.host + ':' + config.services.event.port + config.services.event.endpoint
 
   dispatch = function(data) {
 
@@ -67,11 +82,26 @@ function populateWidget(name, id) {
 
     console.log(data)
     
-    // $.ajax({
-    //   url: event_server_url,
-    //   method: 'POST',
-    //   data: data
-    // })
+    $.ajax({
+      url: event_server_url,
+      method: 'POST',
+      data: data,
+      success: function(res) {
+        console.log(res)
+
+        var history = window.localStorage.getItem('loquat_history')
+
+        if (history) {
+          history = JSON.parse(history)
+        } else {
+          history = []
+        }
+
+        history.push(data)
+        history = JSON.stringify(history)
+        window.localStorage.setItem('loquat_history', history)
+      }
+    })
   }
 
   var session = {
@@ -80,6 +110,8 @@ function populateWidget(name, id) {
   }
 
   $('document').ready(function() {
+
+    
 
     session.uid = window.localStorage.getItem('LQT_UID')
     if(session.uid === null) {
@@ -92,7 +124,10 @@ function populateWidget(name, id) {
       dispatch({
         event: '$set',
         entityType: 'user',
-        entityId: session.uid
+        entityId: session.uid,
+        properties: {
+          id: session.uid
+        }
       })
 
     }

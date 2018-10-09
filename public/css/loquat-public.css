@@ -9,18 +9,24 @@
 
 .widget.loquat_recommendations .loquat-product.template {display: none}
 .widget.loquat_recommendations .loquat-product {
-	width: calc(25% - 10px); margin: 5px; min-height: 250px; float: left;
+	width: calc(25% - 30px); margin: 15px; min-height: 250px; float: left;
 	box-shadow: 0 0 0 1px #efefef; text-align: center; font-size: 16px; border-radius: 5px; overflow: hidden;
 }
 
+
+.loquat-product__details {padding: 10px;}
 .loquat-product__details > p {margin: 0; color: #000; padding-bottom: 10px;}
 
 .loquat-product__picture {width: 100%; height: 200px; background-size: cover; background-position: center;}
 
-.loquat-product__name {font-weight: bold; color: #000;}
-.loquat-product__price {color: #000;}
+.loquat-product__name {color: #000;}
+p.loquat-product__price {color: #777;}
+
 
 @media screen and (max-width: 320px) {
 	.widget.loquat_recommendations .loquat-product {width: 100%;}
 }
 
+@media screen and (max-width: 640px) {
+	.widget.loquat_recommendations .loquat-product {width: calc(50% - 03px);}
+}
