@@ -193,7 +193,7 @@ class Loquat_Admin {
 
 
 	public function add_menu() {
-		add_menu_page( 'Loquat - Store Personlization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
+		add_menu_page( 'Loquat - Store Personalization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
 		// add_options_page( 'Loquat Settings', 'Loquat', 'manage_options', 'loquat', '' );
 	}
 
