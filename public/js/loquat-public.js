@@ -2,10 +2,10 @@
 $ = null
 
 config = {
-  host: 'http://127.0.0.1',
+  host: 'events.loquat.quanrio.com',
   services: {
     event: {
-      port: 9000,
+      port: 80,
       endpoint: '/events',
       accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
     },
