@@ -7,7 +7,7 @@ config = {
       host: 'events.loquat.quanrio.com',
       port: 0,
       endpoints: {
-        default: '/events' 
+        default: 'events' 
       },
       accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
     },
@@ -26,9 +26,10 @@ window.onload = function() {
   populateWidget()
 }
 
-function getUrl(service, endpoint) {
-  var service = config.services[service]
-  service.host + (service.port)?':'+service.port:'' + '/' + service.endpoints.default
+function getUrl(service_name) {
+  var service = config.services[service_name]
+  var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
+  return url
 }
 
 function populateWidget(name, id) {
