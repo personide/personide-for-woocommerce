@@ -2,15 +2,18 @@
 $ = null
 
 config = {
-  host: 'events.loquat.quanrio.com',
   services: {
     event: {
-      port: 80,
-      endpoint: '/events',
+      host: 'events.loquat.quanrio.com',
+      port: 0,
+      endpoints: {
+        default: '/events' 
+      },
       accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
     },
     recommendation: {
-      port: 5000,
+      host: 'rec.loquat.quanrio.com',
+      port: 0,
       endpoints: {
         default: 'recommended_for_you'
       }
@@ -23,11 +26,14 @@ window.onload = function() {
   populateWidget()
 }
 
+function getUrl(service, endpoint) {
+  var service = config.services[service]
+  service.host + (service.port)?':'+service.port:'' + '/' + service.endpoints.default
+}
+
 function populateWidget(name, id) {
 
   console.log('# Populating widget')
-
-  var recommendation = config.services.recommendation
 
   $container = $('.widget.loquat_recommendations')
   $template = $container.find('.item.template')
@@ -35,7 +41,7 @@ function populateWidget(name, id) {
   list = []
 
   $.ajax({
-    url: config.host + ':' + recommendation.port + '/' + recommendation.endpoints.default + '/?_id=d7ab6686-729c-4ef8-8f49-b4eedeef4629',
+    url: getUrl('recommndations') + '/?_id=d7ab6686-729c-4ef8-8f49-b4eedeef4629',
     method: 'GET',
     // data: {
     //   _id: '5b4f826ec0796b52766ab24d'
@@ -68,8 +74,6 @@ function populateWidget(name, id) {
 
   console.log('# Loading loquat')
 
-  event_server_url = config.host + ':' + config.services.event.port + config.services.event.endpoint
-
   dispatch = function(data) {
 
     var timestamp = new Date()
@@ -83,7 +87,7 @@ function populateWidget(name, id) {
     console.log(data)
     
     $.ajax({
-      url: event_server_url,
+      url: getUrl('events'),
       method: 'POST',
       data: data,
       success: function(res) {
@@ -111,7 +115,7 @@ function populateWidget(name, id) {
 
   $('document').ready(function() {
 
-    
+
 
     session.uid = window.localStorage.getItem('LQT_UID')
     if(session.uid === null) {
@@ -129,7 +133,6 @@ function populateWidget(name, id) {
           id: session.uid
         }
       })
-
     }
 
     $('.add_to_cart_button.ajax_add_to_cart').click(function() {
