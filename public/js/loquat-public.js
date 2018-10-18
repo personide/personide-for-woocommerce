@@ -41,7 +41,7 @@ function populateWidget(name, id) {
   list = []
 
   $.ajax({
-    url: getUrl('recommndations') + '/?_id=d7ab6686-729c-4ef8-8f49-b4eedeef4629',
+    url: getUrl('recommendation') + '/?_id=d7ab6686-729c-4ef8-8f49-b4eedeef4629',
     method: 'GET',
     // data: {
     //   _id: '5b4f826ec0796b52766ab24d'
@@ -87,7 +87,7 @@ function populateWidget(name, id) {
     console.log(data)
     
     $.ajax({
-      url: getUrl('events'),
+      url: getUrl('event'),
       method: 'POST',
       data: data,
       success: function(res) {
