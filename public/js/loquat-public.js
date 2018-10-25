@@ -12,7 +12,7 @@ config = {
       accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
     },
     recommendation: {
-      host: 'rec.loquat.quanrio.com',
+      host: 'rc-engine.loquat.quanrio.com',
       port: 0,
       endpoints: {
         default: 'recommended_for_you'
