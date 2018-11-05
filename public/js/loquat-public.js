@@ -36,7 +36,7 @@ function populateWidget(name, id) {
 
   console.log('# Populating widget')
 
-  $container = $('.loquat_hotslot')
+  $container = $('.loquat_hotslot .container')
   $template = $container.find('.item.template')
 
   list = []
@@ -57,7 +57,7 @@ function populateWidget(name, id) {
         // item.url = item.url.replace('https://www.goto.com.pk/', 'localhost/store/?product=')
 
         $item.find('.loquat-product__picture').css('background-image', 'url('+item.image_url+')')
-        $item.find('.loquat-product__name').text(item.title)
+        $item.find('.loquat-product__name').text(item.name)
         $item.find('.loquat-product__link').attr('href', item.url)
         $item.find('.loquat-product__price').text('Rs. '+item.sale_price)
         $container.append($item)
