@@ -188,9 +188,22 @@ class Loquat {
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load' );
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
 		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 1);
+
+		$hotslot_hooks = [
+			'woocommerce_before_cart',
+			'woocommerce_before_shop_loop',
+			'woocommerce_before_single_product',
+			'woocommerce_before_checkout_form'
+		];
+
+		// @todo: filter hooks by enabled from settings 
+		foreach($hotslot_hooks as $hook) {
+			$this->loader->add_action( $hook, $plugin_public, 'add_hotslot');	
+		}
 		
+		add_shortcode('loquat-hotslot', array($plugin_public, 'hotslot_shortcode'));
 
-
+		
 	}
 
 	/**
@@ -238,8 +251,8 @@ class Loquat {
 echo session_id();
 
 if(!session_id()) {
-		session_start();
-	}
+	session_start();
+}
 
 
 function register_session() {

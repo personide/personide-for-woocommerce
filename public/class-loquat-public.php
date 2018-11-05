@@ -123,6 +123,9 @@ class Loquat_Public {
 			// $this->logger->debug( $event_object );	
 			wc_enqueue_js( "dispatch($event_object)" );
 		}
+
+		$pagetype = $this->get_pagetype();
+		wc_enqueue_js( "loquat_pagetype = '$pagetype'" );
 	}
 
 	public function add_to_cart($cart_item_key, $product_id, $quantity) {
@@ -148,13 +151,79 @@ class Loquat_Public {
 
 		wc_enqueue_js( "dispatch($event_object)" );
 	}
+
+	public function add_hotslot() {
+		echo $this->get_hotslot_html();
+	}
+
+	public function get_hotslot_html() {
+		return '
+		<div class="loquat_hotslot" data-priority=1>
+		<div class="container">
+		<h1 class="center">You Must Have</h1>
+		<div class="template item loquat-product">
+		<a class="loquat-product__link" href="">
+		<div class="loquat-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
+		<div class="loquat-product__details">
+		<p class="loquat-product__name">Jingle Bells</p>
+		<p class="loquat-product__price">Rs. 200</p>
+		</div>
+		</a>
+		</div>
+		</div>
+		</div>
+		';
+	}
+
+	public function hotslot_shortcode() {
+		return $this->get_hotslot_html();
+	}
+
+	public function get_pagetype() {
+		global $wp_query;
+		$loop = 'notfound';
+
+		if ( $wp_query->is_page ) {
+			$loop = is_front_page() ? 'front' : 'page';
+		}
+
+		if ( $wp_query->is_home ) {
+			$loop = 'home';
+		} elseif ( $wp_query->is_single ) {
+			$loop = ( $wp_query->is_attachment ) ? 'attachment' : 'single';
+		} elseif ( $wp_query->is_category ) {
+			$loop = 'category';
+		} elseif ( $wp_query->is_tag ) {
+			$loop = 'tag';
+		} elseif ( $wp_query->is_tax ) {
+			$loop = 'tax';
+		} elseif ( $wp_query->is_archive ) {
+			if ( $wp_query->is_day ) {
+				$loop = 'day';
+			} elseif ( $wp_query->is_month ) {
+				$loop = 'month';
+			} elseif ( $wp_query->is_year ) {
+				$loop = 'year';
+			} elseif ( $wp_query->is_author ) {
+				$loop = 'author';
+			} else {
+				$loop = 'archive';
+			}
+		} elseif ( $wp_query->is_search ) {
+			$loop = 'search';
+		} elseif ( $wp_query->is_404 ) {
+			$loop = 'notfound';
+		}
+
+		return $loop;
+	}
 }
 
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/widgets/class-loquat-widget-recommendations.php';
 
 function widget_register() {
-    register_widget( 'Loquat_Widget_Recommendations' );
+	register_widget( 'Loquat_Widget_Recommendations' );
 }
 
 add_action( 'widgets_init', 'widget_register' );

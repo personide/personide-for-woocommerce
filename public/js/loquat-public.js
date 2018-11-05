@@ -36,7 +36,7 @@ function populateWidget(name, id) {
 
   console.log('# Populating widget')
 
-  $container = $('.widget.loquat_recommendations')
+  $container = $('.loquat_hotslot')
   $template = $container.find('.item.template')
 
   list = []

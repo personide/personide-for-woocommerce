@@ -6,7 +6,7 @@ class Loquat_Widget_Recommendations extends WP_Widget {
 	public function __construct() {
 
 		$options = array(
-			'classname' => 'loquat_recommendations',
+			'classname' => 'loquat_hotslot',
 			'description' => 'Loquat Personalized Product Recommendations'
 		); 
 
