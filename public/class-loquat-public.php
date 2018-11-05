@@ -187,28 +187,20 @@ class Loquat_Public {
 			$loop = is_front_page() ? 'front' : 'page';
 		}
 
-		if ( $wp_query->is_home ) {
-			$loop = 'home';
-		} elseif ( $wp_query->is_single ) {
-			$loop = ( $wp_query->is_attachment ) ? 'attachment' : 'single';
-		} elseif ( $wp_query->is_category ) {
+		if ( is_product() ) {
+			$loop = 'product';
+		} elseif ( is_shop() ) {
+			$loop = 'listing';
+		} elseif ( is_product_category() ) {
 			$loop = 'category';
-		} elseif ( $wp_query->is_tag ) {
+		} elseif ( is_product_tag() ) {
 			$loop = 'tag';
-		} elseif ( $wp_query->is_tax ) {
-			$loop = 'tax';
-		} elseif ( $wp_query->is_archive ) {
-			if ( $wp_query->is_day ) {
-				$loop = 'day';
-			} elseif ( $wp_query->is_month ) {
-				$loop = 'month';
-			} elseif ( $wp_query->is_year ) {
-				$loop = 'year';
-			} elseif ( $wp_query->is_author ) {
-				$loop = 'author';
-			} else {
-				$loop = 'archive';
-			}
+		} elseif ( is_product_taxonomy() ) {
+			$loop = 'taxonomy';
+		} elseif ( is_cart() ) {
+			$loop = 'cart';
+		} elseif ( is_checkout() ) {
+			$loop = 'checkout';
 		} elseif ( $wp_query->is_search ) {
 			$loop = 'search';
 		} elseif ( $wp_query->is_404 ) {

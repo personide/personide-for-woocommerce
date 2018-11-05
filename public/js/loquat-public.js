@@ -41,12 +41,15 @@ function populateWidget(name, id) {
 
   list = []
 
+  // console.log(loquat_page)
+
   $.ajax({
-    url: getUrl('recommendation') + '/?user_id=d7ab6686-729c-4ef8-8f49-b4eedeef4629',
+    url: getUrl('recommendation') + '/',
     method: 'GET',
-    // data: {
-    //   _id: '5b4f826ec0796b52766ab24d'
-    // },
+    data: {
+      user_id: 'd7ab6686-729c-4ef8-8f49-b4eedeef4629',
+      page: loquat_pagetype
+    },
     success: function(data){
       console.log(data)
 
