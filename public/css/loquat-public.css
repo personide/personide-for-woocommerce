@@ -1,18 +1,16 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+/****** HOTSLOT ******/
 
 .loquat_hotslot {margin: 50px 0 50px 0;}
 
 .loquat_hotslot .container {}
+.loquat_hotslot .container .listing:after {content: ''; clear:both;}
 
 .loquat_hotslot .center {text-align: center;}
 
 .loquat_hotslot .loquat-product.template {display: none}
 .loquat_hotslot .loquat-product {
 	width: calc(25% - 30px); margin: 15px; min-height: 250px; float: left;
-	box-shadow: 0 0 0 1px #efefef; text-align: center; font-size: 16px; border-radius: 5px; overflow: hidden;
+	/*box-shadow: 0 0 0 1px #efefef;*/ text-align: center; font-size: 16px; border-radius: 5px; overflow: hidden;
 }
 
 
@@ -32,3 +30,20 @@ p.loquat-product__price {color: #777;}
 @media screen and (max-width: 640px) {
 	.loquat_hotslot .loquat-product {width: calc(50% - 03px);}
 }
+
+
+/***** RAIL *****/
+
+.rail-slider .container {position: relative;}
+
+.rail-navigation { cursor: pointer; display: block; position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;}
+
+.rail-navigation.prev {left: -20px}
+.rail-navigation.next {right: -20px}
+
+img.rail-navigation {max-width: 20px}
+
+.frame {position: relative; overflow: hidden; margin: 0 auto;}
+.rail {position: relative; left: 0; padding: 10px 0;  width: 100%; transition: all 1s ease; font-size: 0; white-space: nowrap;}
+.rail .item {white-space: normal; vertical-align: top}
+.rail .item {display: inline-block; float: none;}

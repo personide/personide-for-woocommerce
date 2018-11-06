@@ -36,7 +36,7 @@ function populateWidget(name, id) {
 
   console.log('# Populating widget')
 
-  $container = $('.loquat_hotslot .container')
+  $container = $('.loquat_hotslot .container .listing')
   $template = $container.find('.item.template')
 
   list = []
@@ -66,6 +66,8 @@ function populateWidget(name, id) {
         $container.append($item)
         console.log(item)
       })
+
+      addRail()
     },
     error: function(xhr, err) {
       console.log(err)
@@ -119,8 +121,6 @@ function populateWidget(name, id) {
 
   $('document').ready(function() {
 
-
-
     session.uid = window.localStorage.getItem('LQT_UID')
     if(session.uid === null) {
 
@@ -171,6 +171,58 @@ function populateWidget(name, id) {
 
   })
 
+  addRail = function() {
+    var $rail = $('.rail')
+    var $navigate = $('.rail-navigation')
+
+    var item_width = $rail.children('.item').outerWidth(true)
+    var frame_quantity = Math.floor($('.frame').outerWidth() / item_width)
+    var items_quantity = 1
+    items_quantity = frame_quantity
+    
+    var total_items = $rail.children('.item').not('.template').length
+
+    console.log(item_width)
+    var minLeft = -(total_items - frame_quantity)*item_width
+    var maxLeft = 0
+
+    console.log('frame_quantity', frame_quantity)
+    console.log('total_items', total_items)
+    console.log('minLeft', minLeft)
+    //$rail.children('.item').css('width', $item_width)
+    
+
+    $navigate.click(function(e){
+      console.log('Gota move the rail')
+
+      var direction = e.target.dataset.direction
+      var newLeft
+
+      switch(direction) {
+        case 'left':
+        newLeft = parseFloat($rail.css('left')) + item_width*items_quantity
+        break;
+        
+        case 'right':
+        newLeft = parseFloat($rail.css('left')) - item_width*items_quantity
+        break;
+      }
+
+      console.log('newLeft', newLeft)
+
+      console.log(minLeft)
+
+      if(newLeft < minLeft)
+        newLeft = minLeft
+      if(newLeft > maxLeft)
+        newLeft = maxLeft
+
+      console.log(newLeft)
+      $rail.css('left', newLeft)
+
+    })
+  }
+
   getPageData = function() {
     var type
 
@@ -188,6 +240,7 @@ function populateWidget(name, id) {
       timestamp: new Date()
     }
   }
+
 
 })( jQuery );
 

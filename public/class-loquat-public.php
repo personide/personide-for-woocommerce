@@ -158,21 +158,26 @@ class Loquat_Public {
 
 	public function get_hotslot_html() {
 		return '
-		<div class="loquat_hotslot" data-priority=1>
-		<div class="container">
-		<h1 class="center">You Must Have</h1>
-		<div class="template item loquat-product">
-		<a class="loquat-product__link" href="">
-		<div class="loquat-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
-		<div class="loquat-product__details">
-		<p class="loquat-product__name">Jingle Bells</p>
-		<p class="loquat-product__price">Rs. 200</p>
-		</div>
-		</a>
-		</div>
-		</div>
-		</div>
-		';
+		<div class="loquat_hotslot rail-slider" data-priority=1>
+			<div class="container">
+				<h1 class="center">You Must Have</h1>
+				<img class="rail-navigation prev" data-direction="left" src="'.plugin_dir_url( __FILE__ ).'img/left-arrow.png" alt="">
+				<img class="rail-navigation next" data-direction="right" src="'.plugin_dir_url( __FILE__ ).'img/right-arrow.png" alt="">
+				<div class="frame">
+				<div class="listing rail">
+					<div class="template item loquat-product">
+						<a class="loquat-product__link" href="">
+							<div class="loquat-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
+							<div class="loquat-product__details">
+								<p class="loquat-product__name">Jingle Bells</p>
+								<p class="loquat-product__price">Rs. 200</p>
+							</div>
+						</a>
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>';
 	}
 
 	public function hotslot_shortcode() {
