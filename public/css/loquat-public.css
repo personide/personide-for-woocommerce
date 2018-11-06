@@ -28,7 +28,7 @@ p.loquat-product__price {color: #777;}
 }
 
 @media screen and (max-width: 640px) {
-	.loquat_hotslot .loquat-product {width: calc(50% - 03px);}
+	.loquat_hotslot .loquat-product {width: calc(50% - 30px);}
 }
 
 
