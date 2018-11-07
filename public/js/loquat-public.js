@@ -12,18 +12,24 @@ config = {
       accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
     },
     recommendation: {
-      host: 'rc-engine.loquat.quanrio.com',
+      host: 'rc-engine.loquat.quanrio.com/api/v1/recommend/products',
       port: 0,
       endpoints: {
-        default: 'recommended_for_you'
+        default: ''
       }
     }
   }
 }
 
+session = {
+  currentPage: {},
+  uid: null
+} 
+
 window.onload = function() {
   $ = jQuery
   populateWidget()
+  
 }
 
 function getUrl(service_name) {
@@ -47,8 +53,8 @@ function populateWidget(name, id) {
     url: getUrl('recommendation') + '/',
     method: 'GET',
     data: {
-      user_id: 'd7ab6686-729c-4ef8-8f49-b4eedeef4629',
-      page: loquat_pagetype
+      page: loquat_pagetype,
+      user_id: session.uid
     },
     success: function(data){
       console.log(data)
@@ -114,11 +120,6 @@ function populateWidget(name, id) {
     })
   }
 
-  var session = {
-    currentPage: {},
-    uid: null
-  }
-
   $('document').ready(function() {
 
     session.uid = window.localStorage.getItem('LQT_UID')
@@ -127,7 +128,7 @@ function populateWidget(name, id) {
       console.log('# New User Visiting')
       session.uid = uuidv4()
       window.localStorage.setItem('LQT_UID', session.uid)
-      document.cookie = "LQT_UID="+ session.uid +"; expires=31 Dec 2029 23:59:59 GMT"
+      document.cookie = "LQT_UID="+ session.uid +"; domain=.loquat.quanrio.com;path=/ expires=31 Dec 2029 23:59:59 GMT"
 
       dispatch({
         event: '$set',
@@ -247,6 +248,6 @@ function populateWidget(name, id) {
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+    return v.toString(16)
+  })
 }
