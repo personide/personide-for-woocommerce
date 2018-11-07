@@ -12,10 +12,10 @@ config = {
       accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
     },
     recommendation: {
-      host: 'rc-engine.loquat.quanrio.com/api/v1/recommend/products',
+      host: 'rc-engine.loquat.quanrio.com/api/v1/recommend',
       port: 0,
       endpoints: {
-        default: ''
+        default: 'products'
       }
     }
   }
@@ -48,14 +48,19 @@ function populateWidget(name, id) {
   list = []
 
   // console.log(loquat_page)
+  var query =  {
+    page: loquat_pagetype,
+    user_id: session.uid
+  }
+
+  // @todo: move id to be set via backend
+  if(loquat_pagetype == 'product')
+    query.product_id = $('.product')[0].id.split('-')[1]
 
   $.ajax({
-    url: getUrl('recommendation') + '/',
+    url: getUrl('recommendation'),
     method: 'GET',
-    data: {
-      page: loquat_pagetype,
-      user_id: session.uid
-    },
+    data: query,
     success: function(data){
       console.log(data)
 
