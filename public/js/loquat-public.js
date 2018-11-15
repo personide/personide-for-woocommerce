@@ -106,7 +106,8 @@ function populateWidget(name, id) {
     $.ajax({
       url: getUrl('event'),
       method: 'POST',
-      data: data,
+      contentType: 'application/json',
+      data: JSON.stringify(data),
       success: function(res) {
         console.log(res)
 
@@ -199,6 +200,7 @@ function populateWidget(name, id) {
     
 
     $navigate.click(function(e){
+      e.stopImmediatePropagation()
       console.log('Gota move the rail')
 
       var direction = e.target.dataset.direction
