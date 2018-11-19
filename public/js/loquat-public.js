@@ -42,8 +42,11 @@ function populateWidget(name, id) {
 
   console.log('# Populating widget')
 
-  $container = $('.loquat_hotslot .container .listing')
-  $template = $container.find('.item.template')
+  var $container = $('.loquat_hotslot .container .listing')
+  var $template = $container.find('.item.template')
+
+  var source = $('.loquat_hotslot').attr('data-type')
+  console.log(source)
 
   list = []
 
@@ -68,6 +71,13 @@ function populateWidget(name, id) {
         $item = $template.clone(true, true)
         $item.removeClass('template')
 
+        var querystring = $.param({
+          personide: loquat_pagetype + '_' + source,
+        })
+
+        if(item.url !== undefined) {
+          item.url = item.url + ( item['url'].includes('?') ? '' : '?' ) + querystring
+        }
         // item.url = item.url.replace('https://www.goto.com.pk/', 'localhost/store/?product=')
 
         $item.find('.loquat-product__picture').css('background-image', 'url('+item.image_url+')')
@@ -75,6 +85,7 @@ function populateWidget(name, id) {
         $item.find('.loquat-product__link').attr('href', item.url)
         $item.find('.loquat-product__price').text('Rs. '+item.sale_price)
         $container.append($item)
+
         console.log(item)
       })
 
@@ -99,6 +110,18 @@ function populateWidget(name, id) {
     
     if(data.entityType === 'user') {
       data = Object.assign(data, {entityId: session.uid})
+    }
+
+    if(data.event === 'view' || data.event === 'add-to-cart') {
+      var query = getQueryParams()
+      if(query.personide) {
+        data = Object.assign(data, {
+          meta: {
+            page: query.personide.split(/_(.+)/)[0],
+            source: query.personide.split(/_(.+)/)[1]
+          }
+        })
+      }
     }
 
     console.log(data)
@@ -257,4 +280,15 @@ function uuidv4() {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16)
   })
+}
+
+function getQueryParams() {
+  var vars = [], hash;
+  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('#')[0].split('&')
+  for(var i = 0; i < hashes.length; i++) {
+    hash = hashes[i].split('=')
+    vars[hash[0]] = hash[1]
+  }
+
+  return vars
 }

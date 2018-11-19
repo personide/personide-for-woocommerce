@@ -158,7 +158,7 @@ class Loquat_Public {
 
 	public function get_hotslot_html() {
 		return '
-		<div class="loquat_hotslot rail-slider" data-priority=1>
+		<div class="loquat_hotslot rail-slider" data-priority=1 data-type="hotslot">
 			<div class="container">
 				<h1 class="center">You Must Have</h1>
 				<img class="rail-navigation prev" data-direction="left" src="'.plugin_dir_url( __FILE__ ).'img/left-arrow.png" alt="">
