@@ -169,6 +169,8 @@ class Loquat {
 		// product $delete
 		// $this->loader->add_action( 'woocommerce_trash_product', $plugin_admin, 'product_trash', 1, 1);
 		$this->loader->add_action( 'wp_trash_post', $plugin_admin, 'product_trash' );
+
+		$this->loader->add_action('admin_init', $plugin_admin, 'options_update');
 	}
 
 	/**

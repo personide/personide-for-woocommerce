@@ -193,7 +193,7 @@ class Loquat_Admin {
 
 
 	public function add_menu() {
-		add_menu_page( 'Loquat - Store Personalization', 'Loquat', 'administrator', 'loquat', array($this, 'register_menu'), '');
+		add_menu_page( 'Loquat - Store Personalization', 'Loquat', 'administrator', $this->plugin_name , array($this, 'register_menu'), '');
 		// add_options_page( 'Loquat Settings', 'Loquat', 'manage_options', 'loquat', '' );
 	}
 
@@ -211,4 +211,21 @@ class Loquat_Admin {
 		$_SESSION['loquat_admin_script'] = $_SESSION['loquat_admin_script']."\n\n $code";
 	}
 
+	public function validate($input) {
+    // All checkboxes inputs        
+    $valid = array();
+
+    //Cleanup
+    $valid['access_token'] = (isset($input['access_token']) && !empty($input['access_token'])) ? $input['access_token'] : '';
+    $valid['cleanup'] = (isset($input['cleanup']) && !empty($input['cleanup'])) ? $input['cleanup'] : '';
+
+
+    return $valid;
+ 	}
+
+
+
+	public function options_update() {
+    register_setting($this->plugin_name, $this->plugin_name, array($this, 'validate'));
+	}
 }
