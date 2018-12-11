@@ -10,14 +10,15 @@ config = {
       endpoints: {
         default: 'events' 
       },
-      accessKey: 'WPgcXKd42FPQpZHVbVeMyqF4CQJUnXQmIMTHhX3ZUrSzvy1KXJjdFUrslifa9rnB'
+      accesskey: accesskey
     },
     recommendation: {
       host: 'rc-engine.loquat.quanrio.com/api/v1/recommend',
       port: 0,
       endpoints: {
         default: 'products'
-      }
+      },
+      accesskey: accesskey
     }
   }
 }
@@ -64,6 +65,7 @@ function populateWidget(name, id) {
     url: getUrl('recommendation'),
     method: 'GET',
     data: query,
+    headers: {'Authorization': 'Bearer ' + accesskey},
     success: function(data){
       console.log(data)
 
