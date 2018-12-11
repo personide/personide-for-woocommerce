@@ -106,6 +106,13 @@ class Loquat_Public {
 
 	public function page_load() {
 
+        $options = get_option($this->plugin_name);
+
+        $access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
+
+        #wc_enqueue_js("accesskey='$access_token'");
+		
+
 		if ( is_product() ) {
 			global $post;
 			$product = wc_get_product( $post->ID );
@@ -121,6 +128,8 @@ class Loquat_Public {
 			$event_object = Loquat_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
 
 			// $this->logger->debug( $event_object );	
+
+
 			wc_enqueue_js( "dispatch($event_object)" );
 		}
 

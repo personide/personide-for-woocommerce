@@ -41,16 +41,17 @@
     ?>
     
     <!-- remove some meta and generators from the <head> -->
-       <fieldset>
-        <legend class="screen-reader-text">
-            <span>Enter Your Access token</span>
-        </legend>
-        <label for="<?php echo $this->plugin_name; ?>-access_token">
-            <input type="text" id="<?php echo $this->plugin_name; ?>-access_token" name="<?php echo $this->plugin_name; ?>[access_token]" value= <?php echo $access_token ?> />
-            <span><?php esc_attr_e('Enter Your Access token', $this->plugin_name); ?></span>
-        </label>
-    </fieldset>
-
+    <div>
+           <fieldset>
+            <legend class="screen-reader-text">
+                <span>Enter Your Access token</span>
+            </legend>
+            <label for="<?php echo $this->plugin_name; ?>-access_token">
+                <input type="text" id="<?php echo $this->plugin_name; ?>-access_token" name="<?php echo $this->plugin_name; ?>[access_token]" value= <?php echo $access_token ?> />
+                <span><?php esc_attr_e('Enter Your Access token', $this->plugin_name); ?></span>
+            </label>
+        </fieldset>
+    </div>
 
 
     <?php submit_button('Save all changes', 'primary','submit', TRUE); ?>

@@ -1,5 +1,6 @@
 
 $ = null
+accesskey = null
 
 config = {
   services: {
@@ -29,9 +30,8 @@ session = {
 window.onload = function() {
   $ = jQuery
   populateWidget()
-  
-}
 
+}
 function getUrl(service_name) {
   var service = config.services[service_name]
   var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
@@ -117,8 +117,8 @@ function populateWidget(name, id) {
       if(query.personide) {
         data = Object.assign(data, {
           meta: {
-            page: query.personide.split(/_(.+)/)[0],
-            source: query.personide.split(/_(.+)/)[1]
+            category: query.personide.split(/_(.+)/)[0],
+            sourceElement: query.personide.split(/_(.+)/)[1]
           }
         })
       }
