@@ -133,6 +133,7 @@ function populateWidget(name, id) {
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),
+      headers: {'Authorization': 'Bearer ' + accesskey},
       success: function(res) {
         console.log(res)
 
