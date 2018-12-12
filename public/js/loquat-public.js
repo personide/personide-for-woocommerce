@@ -53,8 +53,7 @@ function populateWidget(name, id) {
 
   // console.log(loquat_page)
   var query =  {
-    page: loquat_pagetype,
-    user_id: session.uid
+    page: loquat_pagetype
   }
 
   // @todo: move id to be set via backend
@@ -133,7 +132,6 @@ function populateWidget(name, id) {
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),
-      headers: {'Authorization': 'Bearer ' + accesskey},
       success: function(res) {
         console.log(res)
 
