@@ -1,8 +1,9 @@
 
 $ = null
-accesskey = null
+// accesskey = null
 
 config = {
+  accessKey: null,
   services: {
     event: {
       host: 'events.loquat.quanrio.com',
@@ -10,7 +11,7 @@ config = {
       endpoints: {
         default: 'events' 
       },
-      accesskey: accesskey
+      accessKey: null
     },
     recommendation: {
       host: 'rc-engine.loquat.quanrio.com/api/v1/recommend',
@@ -18,7 +19,7 @@ config = {
       endpoints: {
         default: 'products'
       },
-      accesskey: accesskey
+      accessKey: null
     }
   }
 }
@@ -31,31 +32,87 @@ session = {
 window.onload = function() {
   $ = jQuery
   populateWidget()
-
-}
-function getUrl(service_name) {
-  var service = config.services[service_name]
-  var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
-  return url
+  initialize()
 }
 
-function populateWidget(name, id) {
+function initialize() {
+  console.log('After document ready')
 
-  console.log('# Populating widget')
+  session.uid = window.localStorage.getItem('PRSN_ID')
+  if(session.uid === null) {
 
-  var $container = $('.loquat_hotslot .container .listing')
-  var $template = $container.find('.item.template')
+    console.log('# New User Visiting')
+    session.uid = uuidv4()
+    window.localStorage.setItem('PRSN_ID', session.uid)
+    // document.cookie = "LQT_UID="+ session.uid +"; domain=.loquat.quanrio.com;path=/ expires=31 Dec 2029 23:59:59 GMT"
 
-  var source = $('.loquat_hotslot').attr('data-type')
-  console.log(source)
+    dispatch({
+      event: '$set',
+      entityType: 'user',
+      entityId: session.uid,
+      properties: {
+        id: session.uid
+      }
+    })
+  }
 
-  list = []
+  $('.add_to_cart_button.ajax_add_to_cart').click(function() {
+    dispatch({
+      event: 'add-to-cart',
+      entityType: 'user',
+      entityId: session.uid,
+      targetEntityType: 'product',
+      targetEntityId: $(this).data('product_id'),
+      properties: {
+        quantity: $(this).data('quantity')
+      }
+    })
+  })
+
+  $('.woocommerce-cart-form__cart-item .product-remove .remove').click(function() {
+    dispatch({
+      event: 'remove-from-cart',
+      entityType: 'user',
+      entityId: session.uid,
+      targetEntityType: 'product',
+      targetEntityId: $(this).data('product_id'),
+      properties: null
+    })
+  })
+
+    // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
+    // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
+
+    // console.log(session.currentPage)
+    // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
+  }
+
+  function getUrl(service_name) {
+    var service = config.services[service_name]
+    var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
+    return url
+  }
+
+  function getHeaders() {
+    return {'Authorization': 'Bearer ' + config.accessKey}
+  }
+
+  function populateWidget(name, id) {
+
+    console.log('# Populating widget')
+
+    var $container = $('.loquat_hotslot .container .listing')
+    var $template = $container.find('.item.template')
+
+    var source = $('.loquat_hotslot').attr('data-type')
+
+    list = []
 
   // console.log(loquat_page)
   var query =  {
     page: loquat_pagetype,
   //  user_id: session.uid
-  }
+}
 
   // @todo: move id to be set via backend
   if(loquat_pagetype == 'product')
@@ -65,7 +122,7 @@ function populateWidget(name, id) {
     url: getUrl('recommendation'),
     method: 'GET',
     data: query,
-    headers: {'Authorization': 'Bearer ' + accesskey},
+    headers: getHeaders(),
     success: function(data){
       console.log(data)
 
@@ -132,7 +189,7 @@ function populateWidget(name, id) {
       url: getUrl('event'),
       method: 'POST',
       contentType: 'application/json',
-      headers: {'Authorization': 'Bearer ' + accesskey},
+      headers: getHeaders(),
       data: JSON.stringify(data),
       success: function(res) {
         console.log(res)
@@ -154,53 +211,6 @@ function populateWidget(name, id) {
 
   $('document').ready(function() {
 
-    session.uid = window.localStorage.getItem('LQT_UID')
-    if(session.uid === null) {
-
-      console.log('# New User Visiting')
-      session.uid = uuidv4()
-      window.localStorage.setItem('LQT_UID', session.uid)
-      document.cookie = "LQT_UID="+ session.uid +"; domain=.loquat.quanrio.com;path=/ expires=31 Dec 2029 23:59:59 GMT"
-
-      dispatch({
-        event: '$set',
-        entityType: 'user',
-        entityId: session.uid,
-        properties: {
-          id: session.uid
-        }
-      })
-    }
-
-    $('.add_to_cart_button.ajax_add_to_cart').click(function() {
-      dispatch({
-        event: 'add-to-cart',
-        entityType: 'user',
-        entityId: session.uid,
-        targetEntityType: 'product',
-        targetEntityId: $(this).data('product_id'),
-        properties: {
-          quantity: $(this).data('quantity')
-        }
-      })
-    })
-
-    $('.woocommerce-cart-form__cart-item .product-remove .remove').click(function() {
-      dispatch({
-        event: 'remove-from-cart',
-        entityType: 'user',
-        entityId: session.uid,
-        targetEntityType: 'product',
-        targetEntityId: $(this).data('product_id'),
-        properties: null
-      })
-    })
-
-    // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
-    // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
-
-    // console.log(session.currentPage)
-    // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
 
   })
 

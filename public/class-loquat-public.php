@@ -110,7 +110,7 @@ class Loquat_Public {
 
         $access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
 
-        wc_enqueue_js("accesskey='$access_token'");
+        wc_enqueue_js("console.log('Setting Key'); config.accessKey = '$access_token'");
 		
 
 		if ( is_product() ) {
