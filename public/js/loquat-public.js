@@ -191,6 +191,10 @@ function initialize() {
       contentType: 'application/json',
       headers: getHeaders(),
       data: JSON.stringify(data),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
       success: function(res) {
         console.log(res)
 
