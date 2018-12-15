@@ -115,6 +115,10 @@ function populateWidget(name, id) {
     method: 'GET',
     data: query,
     headers: getHeaders(),
+    xhrFields: {
+      withCredentials: true
+    },
+    crossDomain: true,
     success: function(data){
       console.log(data)
 
