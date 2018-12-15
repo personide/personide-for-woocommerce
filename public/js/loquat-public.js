@@ -31,21 +31,13 @@ session = {
 
 window.onload = function() {
   $ = jQuery
-  populateWidget()
   initialize()
+  populateWidget()
 }
 
 function initialize() {
-  console.log('After document ready')
 
-  session.uid = window.localStorage.getItem('PRSN_ID')
-  if(session.uid === null) {
-
-    console.log('# New User Visiting')
-    session.uid = uuidv4()
-    window.localStorage.setItem('PRSN_ID', session.uid)
-    // document.cookie = "LQT_UID="+ session.uid +"; domain=.loquat.quanrio.com;path=/ expires=31 Dec 2029 23:59:59 GMT"
-
+  if(session.uid !== null) {
     dispatch({
       event: '$set',
       entityType: 'user',
@@ -80,39 +72,39 @@ function initialize() {
     })
   })
 
-    // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
-    // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
+  // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
+  // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
 
-    // console.log(session.currentPage)
-    // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
-  }
+  // console.log(session.currentPage)
+  // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
+}
 
-  function getUrl(service_name) {
-    var service = config.services[service_name]
-    var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
-    return url
-  }
+function getUrl(service_name) {
+  var service = config.services[service_name]
+  var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
+  return url
+}
 
-  function getHeaders() {
-    return {'Authorization': 'Bearer ' + config.accessKey}
-  }
+function getHeaders() {
+  return {'Authorization': 'Bearer ' + config.accessKey}
+}
 
-  function populateWidget(name, id) {
+function populateWidget(name, id) {
 
-    console.log('# Populating widget')
+  console.log('# Populating widget')
 
-    var $container = $('.loquat_hotslot .container .listing')
-    var $template = $container.find('.item.template')
+  var $container = $('.loquat_hotslot .container .listing')
+  var $template = $container.find('.item.template')
 
-    var source = $('.loquat_hotslot').attr('data-type')
+  var source = $('.loquat_hotslot').attr('data-type')
 
-    list = []
+  list = []
 
   // console.log(loquat_page)
   var query =  {
     page: loquat_pagetype,
-  //  user_id: session.uid
-}
+    //  user_id: session.uid
+  }
 
   // @todo: move id to be set via backend
   if(loquat_pagetype == 'product')
@@ -160,6 +152,13 @@ function initialize() {
 	// 'use strict';
 
   console.log('# Loading loquat')
+
+  session.uid = window.localStorage.getItem('PRSN_ID')
+  if(session.uid === null) {
+    console.log('# Setting new user ')
+    session.uid = uuidv4()
+    window.localStorage.setItem('PRSN_ID', session.uid)
+  }
 
   dispatch = function(data) {
 
@@ -212,11 +211,6 @@ function initialize() {
       }
     })
   }
-
-  $('document').ready(function() {
-
-
-  })
 
   addRail = function() {
     var $rail = $('.rail')
