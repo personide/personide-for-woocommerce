@@ -6,15 +6,15 @@ config = {
   accessKey: null,
   services: {
     event: {
-      host: 'events.loquat.quanrio.com',
+      host: 'connect.personide.com',
       port: 0,
       endpoints: {
-        default: 'events' 
+        default: 'events'
       },
       accessKey: null
     },
     recommendation: {
-      host: 'rc-engine.loquat.quanrio.com/api/v1/recommend',
+      host: 'connect.personide.com/api/v1/recommend',
       port: 0,
       endpoints: {
         default: 'products'
