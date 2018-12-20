@@ -14,7 +14,7 @@ config = {
       accessKey: null
     },
     recommendation: {
-      host: 'connect.personide.com/v1/products',
+      host: 'connect.personide.com/v1',
       port: 0,
       endpoints: {
         default: 'products'
