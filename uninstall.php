@@ -22,7 +22,7 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
+ * @package    Personide
  */
 
 // If uninstall not called from WordPress, then exit.

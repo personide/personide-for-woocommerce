@@ -9,8 +9,8 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
- * @subpackage Loquat/includes
+ * @package    Personide
+ * @subpackage Personide/includes
  */
 
 /**
@@ -23,11 +23,11 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Loquat
- * @subpackage Loquat/includes
+ * @package    Personide
+ * @subpackage Personide/includes
  * @author     Quanrio <contact@quanrio.com>
  */
-class Loquat {
+class Personide {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,7 +35,7 @@ class Loquat {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Loquat_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Personide_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -72,7 +72,7 @@ class Loquat {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'loquat';
+		$this->plugin_name = 'personide';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -87,10 +87,10 @@ class Loquat {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Loquat_Loader. Orchestrates the hooks of the plugin.
-	 * - Loquat_i18n. Defines internationalization functionality.
-	 * - Loquat_Admin. Defines all hooks for the admin area.
-	 * - Loquat_Public. Defines all hooks for the public side of the site.
+	 * - Personide_Loader. Orchestrates the hooks of the plugin.
+	 * - Personide_i18n. Defines internationalization functionality.
+	 * - Personide_Admin. Defines all hooks for the admin area.
+	 * - Personide_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -104,33 +104,33 @@ class Loquat {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-loquat-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-personide-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-loquat-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-personide-public.php';
 
-		$this->loader = new Loquat_Loader();
+		$this->loader = new Personide_Loader();
 
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Loquat_i18n class in order to set the domain and to register the hook
+	 * Uses the Personide_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -138,7 +138,7 @@ class Loquat {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Loquat_i18n();
+		$plugin_i18n = new Personide_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -153,7 +153,7 @@ class Loquat {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Loquat_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Personide_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -182,7 +182,7 @@ class Loquat {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Loquat_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Personide_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -203,7 +203,7 @@ class Loquat {
 			$this->loader->add_action( $hook, $plugin_public, 'add_hotslot');	
 		}
 		
-		add_shortcode('loquat-hotslot', array($plugin_public, 'hotslot_shortcode'));
+		add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
 
 		
 	}
@@ -232,7 +232,7 @@ class Loquat {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Loquat_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Personide_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;

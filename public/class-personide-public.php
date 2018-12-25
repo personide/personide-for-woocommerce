@@ -6,8 +6,8 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
- * @subpackage Loquat/public
+ * @package    Personide
+ * @subpackage Personide/public
  */
 
 /**
@@ -16,12 +16,12 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
- * @package    Loquat
- * @subpackage Loquat/public
+ * @package    Personide
+ * @subpackage Personide/public
  * @author     Quanrio <contact@quanrio.com>
  */
 
-class Loquat_Public {
+class Personide_Public {
 
 	/**
 	 * The ID of this plugin.
@@ -55,7 +55,7 @@ class Loquat_Public {
 		$this->logger = wc_get_logger();
 		$this->current_user_id = isset($_COOKIE['LQT_UID']) ? $_COOKIE['LQT_UID'] : '';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-util.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
 	}
 
 	/**
@@ -69,15 +69,15 @@ class Loquat_Public {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Loquat_Loader as all of the hooks are defined
+		 * defined in Personide_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Loquat_Loader will then create the relationship
+		 * The Personide_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/loquat-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/personide-public.css', array(), $this->version, 'all' );
 
 	}
 
@@ -92,15 +92,15 @@ class Loquat_Public {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Loquat_Loader as all of the hooks are defined
+		 * defined in Personide_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Loquat_Loader will then create the relationship
+		 * The Personide_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/loquat-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
 	}
 
@@ -125,7 +125,7 @@ class Loquat_Public {
 
 			wc_enqueue_js( "console.log('Viewing Product: $name')" );
 
-			$event_object = Loquat_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
+			$event_object = Personide_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
 
 			// $this->logger->debug( $event_object );	
 
@@ -134,7 +134,7 @@ class Loquat_Public {
 		}
 
 		$pagetype = $this->get_pagetype();
-		wc_enqueue_js( "loquat_pagetype = '$pagetype'" );
+		wc_enqueue_js( "personide_pagetype = '$pagetype'" );
 	}
 
 	public function add_to_cart($cart_item_key, $product_id, $quantity) {
@@ -142,7 +142,7 @@ class Loquat_Public {
 		$product = wc_get_product( $product_id );
 		$name = $product->get_title();
 
-		$event_object = Loquat_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
+		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
 		
 		wc_enqueue_js( "dispatch($event_object)" );
 	}
@@ -156,7 +156,7 @@ class Loquat_Public {
 			'items' => array_keys($items)
 		);
 
-		$event_object = Loquat_Util::get_event( 'purchase', 'user', $this->current_user_id, json_encode($properties), 'order', $order->get_id() );
+		$event_object = Personide_Util::get_event( 'purchase', 'user', $this->current_user_id, json_encode($properties), 'order', $order->get_id() );
 
 		wc_enqueue_js( "dispatch($event_object)" );
 	}
@@ -167,19 +167,19 @@ class Loquat_Public {
 
 	public function get_hotslot_html() {
 		return '
-		<div class="loquat_hotslot rail-slider" data-priority=1 data-type="hotslot">
+		<div class="personide_hotslot rail-slider" data-priority=1 data-type="hotslot">
 			<div class="container">
 				<h1 class="center">You Must Have</h1>
 				<img class="rail-navigation prev" data-direction="left" src="'.plugin_dir_url( __FILE__ ).'img/left-arrow.png" alt="">
 				<img class="rail-navigation next" data-direction="right" src="'.plugin_dir_url( __FILE__ ).'img/right-arrow.png" alt="">
 				<div class="frame">
 				<div class="listing rail">
-					<div class="template item loquat-product">
-						<a class="loquat-product__link" href="">
-							<div class="loquat-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
-							<div class="loquat-product__details">
-								<p class="loquat-product__name">Jingle Bells</p>
-								<p class="loquat-product__price">Rs. 200</p>
+					<div class="template item personide-product">
+						<a class="personide-product__link" href="">
+							<div class="personide-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
+							<div class="personide-product__details">
+								<p class="personide-product__name">Jingle Bells</p>
+								<p class="personide-product__price">Rs. 200</p>
 							</div>
 						</a>
 					</div>
@@ -226,10 +226,10 @@ class Loquat_Public {
 }
 
 
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/widgets/class-loquat-widget-recommendations.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/widgets/class-personide-widget-recommendations.php';
 
 function widget_register() {
-	register_widget( 'Loquat_Widget_Recommendations' );
+	register_widget( 'Personide_Widget_Recommendations' );
 }
 
 add_action( 'widgets_init', 'widget_register' );

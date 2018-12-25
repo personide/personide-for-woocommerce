@@ -6,8 +6,8 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
- * @subpackage Loquat/includes
+ * @package    Personide
+ * @subpackage Personide/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Loquat
- * @subpackage Loquat/includes
+ * @package    Personide
+ * @subpackage Personide/includes
  * @author     Quanrio <contact@quanrio.com>
  */
-class Loquat_Loader {
+class Personide_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

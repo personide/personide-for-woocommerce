@@ -6,8 +6,8 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
- * @subpackage Loquat/admin
+ * @package    Personide
+ * @subpackage Personide/admin
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Loquat
- * @subpackage Loquat/admin
+ * @package    Personide
+ * @subpackage Personide/admin
  * @author     Quanrio <contact@quanrio.com>
  */
-class Loquat_Admin {
+class Personide_Admin {
 
 	/**
 	 * The ID of this plugin.
@@ -52,10 +52,10 @@ class Loquat_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->logger = wc_get_logger();
-		$this->context = array( 'source' => 'loquat' );
+		$this->context = array( 'source' => 'personide' );
 		$this->new_products = array();
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loquat-util.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
 
 	}
 
@@ -70,15 +70,15 @@ class Loquat_Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Loquat_Loader as all of the hooks are defined
+		 * defined in Personide_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Loquat_Loader will then create the relationship
+		 * The Personide_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/loquat-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/personide-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -93,15 +93,15 @@ class Loquat_Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Loquat_Loader as all of the hooks are defined
+		 * defined in Personide_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Loquat_Loader will then create the relationship
+		 * The Personide_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/loquat-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
@@ -159,7 +159,7 @@ class Loquat_Admin {
 				else {
 				}
 
-				$event_object = Loquat_Util::get_event( '$set', 'item', $product->get_id(), json_encode($properties) );
+				$event_object = Personide_Util::get_event( '$set', 'item', $product->get_id(), json_encode($properties) );
 
 				wc_enqueue_js("dispatch($event_object)");
 
@@ -171,7 +171,7 @@ class Loquat_Admin {
 	public function product_trash($id) {
 		$this->logger->debug( 'Trash Product: ' . $id );
 		$product = wc_get_product($id);
-		$event_object = Loquat_Util::get_event( '$delete', 'item', $product->get_id() );
+		$event_object = Personide_Util::get_event( '$delete', 'item', $product->get_id() );
 	}
 
 
@@ -193,22 +193,22 @@ class Loquat_Admin {
 
 
 	public function add_menu() {
-		add_menu_page( 'Loquat - Store Personalization', 'Loquat', 'administrator', $this->plugin_name , array($this, 'register_menu'), '');
-		// add_options_page( 'Loquat Settings', 'Loquat', 'manage_options', 'loquat', '' );
+		add_menu_page( 'Personide - Store Personalization', 'Personide', 'administrator', $this->plugin_name , array($this, 'register_menu'), '');
+		// add_options_page( 'Personide Settings', 'Personide', 'manage_options', 'personide', '' );
 	}
 
 
 	public function register_menu() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/loquat-admin-display.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/personide-admin-display.php';
 	}
 
 
 	// @todo remove
 	public function enqueue_script($code) {
-		if(empty($_SESSION['loquat_admin_script']))
-			$_SESSION['loquat_admin_script'] = '';
+		if(empty($_SESSION['personide_admin_script']))
+			$_SESSION['personide_admin_script'] = '';
 
-		$_SESSION['loquat_admin_script'] = $_SESSION['loquat_admin_script']."\n\n $code";
+		$_SESSION['personide_admin_script'] = $_SESSION['personide_admin_script']."\n\n $code";
 	}
 
 	public function validate($input) {

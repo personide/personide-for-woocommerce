@@ -1,34 +1,34 @@
 /****** HOTSLOT ******/
 
-.loquat_hotslot {margin: 50px 0 50px 0;}
+.personide_hotslot {margin: 50px 0 50px 0;}
 
-.loquat_hotslot .container {}
-.loquat_hotslot .container .listing:after {content: ''; clear:both;}
+.personide_hotslot .container {}
+.personide_hotslot .container .listing:after {content: ''; clear:both;}
 
-.loquat_hotslot .center {text-align: center;}
+.personide_hotslot .center {text-align: center;}
 
-.loquat_hotslot .loquat-product.template {display: none}
-.loquat_hotslot .loquat-product {
+.personide_hotslot .personide-product.template {display: none}
+.personide_hotslot .personide-product {
 	width: calc(25% - 30px); margin: 15px; min-height: 250px; float: left;
 	/*box-shadow: 0 0 0 1px #efefef;*/ text-align: center; font-size: 16px; border-radius: 5px; overflow: hidden;
 }
 
 
-.loquat-product__details {padding: 10px;}
-.loquat-product__details > p {margin: 0; color: #000; padding-bottom: 10px;}
+.personide-product__details {padding: 10px;}
+.personide-product__details > p {margin: 0; color: #000; padding-bottom: 10px;}
 
-.loquat-product__picture {width: 100%; height: 200px; background-size: cover; background-position: center;}
+.personide-product__picture {width: 100%; height: 200px; background-size: cover; background-position: center;}
 
-.loquat-product__name {color: #000;}
-p.loquat-product__price {color: #777;}
+.personide-product__name {color: #000;}
+p.personide-product__price {color: #777;}
 
 
 @media screen and (max-width: 320px) {
-	.loquat_hotslot .loquat-product {width: 100%;}
+	.personide_hotslot .personide-product {width: 100%;}
 }
 
 @media screen and (max-width: 640px) {
-	.loquat_hotslot .loquat-product {width: calc(50% - 30px);}
+	.personide_hotslot .personide-product {width: calc(50% - 30px);}
 }
 
 

@@ -6,8 +6,8 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
- * @subpackage Loquat/includes
+ * @package    Personide
+ * @subpackage Personide/includes
  */
 
 /**
@@ -16,12 +16,12 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    Loquat
- * @subpackage Loquat/includes
+ * @package    Personide
+ * @subpackage Personide/includes
  * @author     Quanrio <contact@quanrio.com>
  */
 
-class Loquat_Lib {
+class Personide_Lib {
 
 	private $logger;
 	private $api_url;

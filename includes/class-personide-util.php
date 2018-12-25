@@ -1,7 +1,7 @@
 
 <?php 
 
-class Loquat_Util {
+class Personide_Util {
 
 	public static function get_event($type, $entityType, $entityId, $properties = NULL, $targetEntityType = NULL, $targetEntityId = NULL) {
 		
@@ -21,7 +21,7 @@ class Loquat_Util {
 
 	public static function enqueue_script($code, $store) {
 
-		$store = 'loquat_' . $store . '_script';
+		$store = 'personide_' . $store . '_script';
 
 		if(empty($_SESSION[$store]))
 			$_SESSION[$store] = '';

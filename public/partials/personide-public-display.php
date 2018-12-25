@@ -8,8 +8,8 @@
  * @link       http://www.quanrio.com
  * @since      1.0.0
  *
- * @package    Loquat
- * @subpackage Loquat/public/partials
+ * @package    Personide
+ * @subpackage Personide/public/partials
  */
 ?>
 

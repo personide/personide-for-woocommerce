@@ -93,21 +93,21 @@ function populateWidget(name, id) {
 
   console.log('# Populating widget')
 
-  var $container = $('.loquat_hotslot .container .listing')
+  var $container = $('.personide_hotslot .container .listing')
   var $template = $container.find('.item.template')
 
-  var source = $('.loquat_hotslot').attr('data-type')
+  var source = $('.personide_hotslot').attr('data-type')
 
   list = []
 
-  // console.log(loquat_page)
+  // console.log(personide_page)
   var query =  {
-    page: loquat_pagetype,
+    page: personide_pagetype,
     //  user_id: session.uid
   }
 
   // @todo: move id to be set via backend
-  if(loquat_pagetype == 'product')
+  if(personide_pagetype == 'product')
     query.product_id = $('.product')[0].id.split('-')[1]
 
   $.ajax({
@@ -127,7 +127,7 @@ function populateWidget(name, id) {
         $item.removeClass('template')
 
         var querystring = $.param({
-          personide: loquat_pagetype + '_' + source,
+          personide: personide_pagetype + '_' + source,
         })
 
         if(item.url !== undefined) {
@@ -135,10 +135,10 @@ function populateWidget(name, id) {
         }
         // item.url = item.url.replace('https://www.goto.com.pk/', 'localhost/store/?product=')
 
-        $item.find('.loquat-product__picture').css('background-image', 'url('+item.image_url+')')
-        $item.find('.loquat-product__name').text(item.title)
-        $item.find('.loquat-product__link').attr('href', item.url)
-        $item.find('.loquat-product__price').text('Rs. '+item.sale_price)
+        $item.find('.personide-product__picture').css('background-image', 'url('+item.image_url+')')
+        $item.find('.personide-product__name').text(item.title)
+        $item.find('.personide-product__link').attr('href', item.url)
+        $item.find('.personide-product__price').text('Rs. '+item.sale_price)
         $container.append($item)
 
         console.log(item)
@@ -155,7 +155,7 @@ function populateWidget(name, id) {
 (function( $ ) {
 	// 'use strict';
 
-  console.log('# Loading loquat')
+  console.log('# Loading personide')
 
   session.uid = window.localStorage.getItem('PRSN_ID')
   if(session.uid === null) {
@@ -201,7 +201,7 @@ function populateWidget(name, id) {
       success: function(res) {
         console.log(res)
 
-        var history = window.localStorage.getItem('loquat_history')
+        var history = window.localStorage.getItem('personide_history')
 
         if (history) {
           history = JSON.parse(history)
@@ -211,7 +211,7 @@ function populateWidget(name, id) {
 
         history.push(data)
         history = JSON.stringify(history)
-        window.localStorage.setItem('loquat_history', history)
+        window.localStorage.setItem('personide_history', history)
       }
     })
   }
