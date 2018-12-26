@@ -100,7 +100,12 @@ class Personide_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
+
+		$options = get_option($this->plugin_name);
+    $access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
+
+		wp_enqueue_script( $this->plugin_name, "http://connect.personide.com/lib/js?id=".$options['access_token'], array( 'jquery' ), null, false );
 
 	}
 
