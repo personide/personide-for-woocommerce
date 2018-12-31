@@ -161,7 +161,7 @@ class Personide_Admin {
 
 				$event_object = Personide_Util::get_event( '$set', 'item', $product->get_id(), json_encode($properties) );
 
-				wc_enqueue_js("dispatch($event_object)");
+				wc_enqueue_js( "Personide.dispatch($event_object)" );
 
 				$this->logger->debug( "# Add / Update Product: " . $product->get_id() );
 			}

@@ -103,7 +103,9 @@ class Personide_Public {
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
 		$options = get_option($this->plugin_name);
-    $access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
+		$access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
+
+		wc_enqueue_js("PERSONIDE_DIR = '".plugin_dir_url( __FILE__ )."'");
 
 		wp_enqueue_script( $this->plugin_name, "http://connect.personide.com/lib/js?id=".$options['access_token'], array( 'jquery' ), null, false );
 
@@ -111,35 +113,39 @@ class Personide_Public {
 
 	public function page_load() {
 
-        $options = get_option($this->plugin_name);
+		$options = get_option($this->plugin_name);
 
-        $access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
+		$access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
 
-        wc_enqueue_js("console.log('Setting Key'); config.accessKey = '$access_token'");
+		// wc_enqueue_js("Personide.setKey('$access_token');");
 		
 
 		if ( is_product() ) {
 			global $post;
 			$product = wc_get_product( $post->ID );
-
  			// @todo skip following if product is in cart
-
 			$this->logger->debug( '# Viewing Product: ' . $product->get_title() );
 
 			$name = $product->get_title();
-
 			wc_enqueue_js( "console.log('Viewing Product: $name')" );
-
+			
 			$event_object = Personide_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
-
-			// $this->logger->debug( $event_object );	
-
-
-			wc_enqueue_js( "dispatch($event_object)" );
+			wc_enqueue_js( "Personide.dispatch($event_object)" );
 		}
 
 		$pagetype = $this->get_pagetype();
 		wc_enqueue_js( "personide_pagetype = '$pagetype'" );
+	}
+
+	public function product_html() {
+		if ( isset( $_GET['personide_product_id'] ) ) {
+			global $product;
+			$id = $_GET['personide_product_id'];
+			$product = wc_get_product( $id );
+			echo $product->get_id();
+			echo wc_get_template_html('/single-product/product-thumbnails.php', array('product' => $product));
+			die;
+		}
 	}
 
 	public function add_to_cart($cart_item_key, $product_id, $quantity) {
@@ -149,7 +155,7 @@ class Personide_Public {
 
 		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
 		
-		wc_enqueue_js( "dispatch($event_object)" );
+		wc_enqueue_js( "Personide.dispatch($event_object)" );
 	}
 
 	public function checkout($order_get_id) {
@@ -163,7 +169,7 @@ class Personide_Public {
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', $this->current_user_id, json_encode($properties), 'order', $order->get_id() );
 
-		wc_enqueue_js( "dispatch($event_object)" );
+		wc_enqueue_js( "Personide.dispatch($event_object)" );
 	}
 
 	public function add_hotslot() {
@@ -172,26 +178,20 @@ class Personide_Public {
 
 	public function get_hotslot_html() {
 		return '
-		<div class="personide_hotslot rail-slider" data-priority=1 data-type="hotslot">
-			<div class="container">
-				<h1 class="center">You Must Have</h1>
-				<img class="rail-navigation prev" data-direction="left" src="'.plugin_dir_url( __FILE__ ).'img/left-arrow.png" alt="">
-				<img class="rail-navigation next" data-direction="right" src="'.plugin_dir_url( __FILE__ ).'img/right-arrow.png" alt="">
-				<div class="frame">
-				<div class="listing rail">
-					<div class="template item personide-product">
-						<a class="personide-product__link" href="">
-							<div class="personide-product__picture" style="background-image: url(http://localhost/store/wp-content/uploads/2018/06/mekamon_berserker_robot2_-_tejar.jpg)"></div>
-							<div class="personide-product__details">
-								<p class="personide-product__name">Jingle Bells</p>
-								<p class="personide-product__price">Rs. 200</p>
-							</div>
-						</a>
-					</div>
-				</div>
-				</div>
-			</div>
-		</div>';
+		<div class="personide_container" data-priority=1 data-type="hotslot">
+	  <h1 class="personide_hotslot-title" class="center">You Must Have</h1>
+	  <div class="listing">
+	    <div class="template item personide-product">
+	      <a class="personide-product__link" href="">
+	        <img class="personide-product__picture" src=""/>
+	        <div class="personide-product__details">
+	          <p class="personide-product__name"></p>
+	          <p class="personide-product__price"></p>
+	        </div>
+	      </a>
+	    </div>
+	  </div>
+	</div>';
 	}
 
 	public function hotslot_shortcode() {

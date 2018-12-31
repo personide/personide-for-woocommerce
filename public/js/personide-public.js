@@ -1,161 +1,208 @@
 
-$ = null
-// accesskey = null
-
-config = {
-  accessKey: null,
-  services: {
-    event: {
-      host: 'connect.personide.com',
-      port: 0,
-      endpoints: {
-        default: 'events'
-      },
-      accessKey: null
-    },
-    recommendation: {
-      host: 'connect.personide.com/v1',
-      port: 0,
-      endpoints: {
-        default: 'products'
-      },
-      accessKey: null
-    }
-  }
-}
-
-session = {
-  currentPage: {},
-  uid: null
-} 
+Personide = {}
 
 window.onload = function() {
-  $ = jQuery
-  initialize()
-  populateWidget()
-}
+  Personide.init()
+  Personide.populateWidget()
+};
 
-function initialize() {
-
-  if(session.uid !== null) {
-    dispatch({
-      event: '$set',
-      entityType: 'user',
-      entityId: session.uid,
-      properties: {
-        id: session.uid
-      }
-    })
-  }
-
-  $('.add_to_cart_button.ajax_add_to_cart').click(function() {
-    dispatch({
-      event: 'add-to-cart',
-      entityType: 'user',
-      entityId: session.uid,
-      targetEntityType: 'product',
-      targetEntityId: $(this).data('product_id'),
-      properties: {
-        quantity: $(this).data('quantity')
-      }
-    })
-  })
-
-  $('.woocommerce-cart-form__cart-item .product-remove .remove').click(function() {
-    dispatch({
-      event: 'remove-from-cart',
-      entityType: 'user',
-      entityId: session.uid,
-      targetEntityType: 'product',
-      targetEntityId: $(this).data('product_id'),
-      properties: null
-    })
-  })
-
-  // window.sessionStorage.setItem('lastPage', window.sessionStorage.getItem('currentPage'))
-  // window.sessionStorage.setItem('currentPage', JSON.stringify(session.currentPage))
-
-  // console.log(session.currentPage)
-  // console.log(JSON.parse(window.sessionStorage.getItem('lastPage')))
-}
-
-function getUrl(service_name) {
-  var service = config.services[service_name]
-  var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
-  return url
-}
-
-function getHeaders() {
-  return {'Authorization': 'Bearer ' + config.accessKey}
-}
-
-function populateWidget(name, id) {
-
-  console.log('# Populating widget')
-
-  var $container = $('.personide_hotslot .container .listing')
-  var $template = $container.find('.item.template')
-
-  var source = $('.personide_hotslot').attr('data-type')
-
-  list = []
-
-  // console.log(personide_page)
-  var query =  {
-    page: personide_pagetype,
-    //  user_id: session.uid
-  }
-
-  // @todo: move id to be set via backend
-  if(personide_pagetype == 'product')
-    query.product_id = $('.product')[0].id.split('-')[1]
-
-  $.ajax({
-    url: getUrl('recommendation'),
-    method: 'GET',
-    data: query,
-    headers: getHeaders(),
-    xhrFields: {
-      withCredentials: true
-    },
-    crossDomain: true,
-    success: function(data){
-      console.log(data)
-
-      data.forEach(function(item) {
-        $item = $template.clone(true, true)
-        $item.removeClass('template')
-
-        var querystring = $.param({
-          personide: personide_pagetype + '_' + source,
-        })
-
-        if(item.url !== undefined) {
-          item.url = item.url + ( item['url'].includes('?') ? '' : '?' ) + querystring
-        }
-        // item.url = item.url.replace('https://www.goto.com.pk/', 'localhost/store/?product=')
-
-        $item.find('.personide-product__picture').css('background-image', 'url('+item.image_url+')')
-        $item.find('.personide-product__name').text(item.title)
-        $item.find('.personide-product__link').attr('href', item.url)
-        $item.find('.personide-product__price').text('Rs. '+item.sale_price)
-        $container.append($item)
-
-        console.log(item)
-      })
-
-      addRail()
-    },
-    error: function(xhr, err) {
-      console.log(err)
-    }
-  })
-}
+////////////////////////////////////////////////
+////////////////////////////////////////////////
 
 (function( $ ) {
-	// 'use strict';
 
-  console.log('# Loading personide')
+  var config = {
+    accessKey: null,
+    services: {
+      event: {
+        host: 'connect.personide.com',
+        port: 0,
+        endpoints: {
+          default: 'events'
+        },
+        accessKey: null
+      },
+      recommendation: {
+        host: 'connect.personide.com/api/v1',
+        port: 0,
+        endpoints: {
+          default: 'products'
+        },
+        accessKey: null
+      }
+    }
+  }
+
+  var session = {
+    currentPage: {},
+    uid: null
+  }
+
+  Personide.setKey = function(key) {
+    config.accessKey = String(key)
+  }
+
+  Personide.getKey = function() {
+    return config.accessKey
+  }  
+
+  /**
+  ** Bind event triggers to DOM events
+  **/
+
+  Personide.init = function() {
+
+    if(session.uid !== null) {
+      this.dispatch({
+        event: '$set',
+        entityType: 'user',
+        entityId: session.uid,
+        properties: {
+          id: session.uid
+        }
+      })
+    }
+
+    $('.add_to_cart_button.ajax_add_to_cart').click(function() {
+      this.dispatch({
+        event: 'add-to-cart',
+        entityType: 'user',
+        entityId: session.uid,
+        targetEntityType: 'product',
+        targetEntityId: $(this).data('product_id'),
+        properties: {
+          quantity: $(this).data('quantity')
+        }
+      })
+    })
+
+    $('.woocommerce-cart-form__cart-item .product-remove .remove').click(function() {
+      this.dispatch({
+        event: 'remove-from-cart',
+        entityType: 'user',
+        entityId: session.uid,
+        targetEntityType: 'product',
+        targetEntityId: $(this).data('product_id'),
+        properties: null
+      })
+    })
+  }
+
+
+
+  /**
+  ** populate a widget skeleton with products returned from personide connect
+  **/
+
+  Personide.populateWidget = function(name, id) {
+
+    console.log('# Populating widget')
+
+    var $container = $('.personide_container .listing')
+    var $template = $container.find('.item.template')
+
+    var source = $('.personide_container').attr('data-type')
+
+    list = []
+
+    var query =  {
+      page: personide_pagetype
+    }
+
+    // @todo: move id to be set via backend
+    if(personide_pagetype == 'product')
+      query.product_id = $('.product')[0].id.split('-')[1]
+
+    $.ajax({
+      url: getUrl('recommendation'),
+      method: 'GET',
+      data: query,
+      headers: getHeaders(),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: function(data) {
+        console.log(data)
+
+        data.forEach(function(item) {
+          $item = $template.clone(true, true)
+          $item.removeClass('template')
+
+          var querystring = $.param({
+            personide: personide_pagetype + '_' + source,
+          })
+
+          if(item.url !== undefined) {
+            item.url = item.url + ( item['url'].includes('?') ? '' : '?' ) + querystring
+          }
+
+          $item.find('.personide-product__picture').attr('src', item.image_url)
+          $item.find('.personide-product__name').text(item.title)
+          $item.find('.personide-product__link').attr('href', item.url)
+          $item.find('.personide-product__price').text('Rs. '+item.sale_price)
+          $container.append($item)
+
+          console.log(item)
+        })
+
+        $('<link/>', {
+          rel: 'stylesheet',
+          type: 'text/css',
+          href: 'http://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css'
+        }).appendTo('head');
+
+        $.getScript('http://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', function() {
+          $('.personide_container .listing').slick({
+            speed: 300,
+            slidesToShow: 5,
+            slidesToScroll: 3,
+            nextArrow: '<img class="slick-arrow slick-next" src="'+PERSONIDE_DIR+'img/right-arrow.png">',
+            prevArrow: '<img class="slick-arrow slick-prev" src="'+PERSONIDE_DIR+'img/left-arrow.png">',
+            respondTo: 'min',
+            responsive: [
+            {
+              breakpoint: 1440,
+              settings: {
+                slidesToShow: 4,
+                slidesToScroll: 2
+              }
+            },
+            {
+              breakpoint: 740,
+              settings: {
+                slidesToShow: 3,
+                slidesToScroll: 2
+              }
+            },
+            {
+              breakpoint: 425,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+              }
+            },
+            {
+              breakpoint: 375,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 3000
+              }
+            }
+            ]
+          })
+        })
+      },
+      
+      error: function(xhr, err) {
+        console.log(err)
+      }
+    })
+  }
+
+  // Set new user if not exists
 
   session.uid = window.localStorage.getItem('PRSN_ID')
   if(session.uid === null) {
@@ -164,12 +211,16 @@ function populateWidget(name, id) {
     window.localStorage.setItem('PRSN_ID', session.uid)
   }
 
-  dispatch = function(data) {
+  /**
+  ** dispatch events to personide connect
+  **/
+
+  Personide.dispatch = function(data) {
 
     var timestamp = new Date()
     timestamp = timestamp.toISOString()
     data = Object.assign(data, {eventTime: timestamp})
-    
+
     if(data.entityType === 'user') {
       data = Object.assign(data, {entityId: session.uid})
     }
@@ -187,7 +238,7 @@ function populateWidget(name, id) {
     }
 
     console.log(data)
-    
+
     $.ajax({
       url: getUrl('event'),
       method: 'POST',
@@ -216,94 +267,37 @@ function populateWidget(name, id) {
     })
   }
 
-  addRail = function() {
-    var $rail = $('.rail')
-    var $navigate = $('.rail-navigation')
+  /**
+  ** Utility functions
+  **/
 
-    var item_width = $rail.children('.item').outerWidth(true)
-    var frame_quantity = Math.floor($('.frame').outerWidth() / item_width)
-    var items_quantity = 1
-    items_quantity = frame_quantity
-    
-    var total_items = $rail.children('.item').not('.template').length
+  function getUrl(service_name) {
+    var service = config.services[service_name]
+    var url = 'http://' + service.host + ( (service.port)?':'+service.port:'' ) + '/' + service.endpoints.default
+    return url
+  }
 
-    console.log(item_width)
-    var minLeft = -(total_items - frame_quantity)*item_width
-    var maxLeft = 0
+  function getHeaders() {
+    return {'Authorization': 'Bearer ' + config.accessKey}
+  }
 
-    console.log('frame_quantity', frame_quantity)
-    console.log('total_items', total_items)
-    console.log('minLeft', minLeft)
-    //$rail.children('.item').css('width', $item_width)
-    
-
-    $navigate.click(function(e){
-      e.stopImmediatePropagation()
-      console.log('Gota move the rail')
-
-      var direction = e.target.dataset.direction
-      var newLeft
-
-      switch(direction) {
-        case 'left':
-        newLeft = parseFloat($rail.css('left')) + item_width*items_quantity
-        break;
-        
-        case 'right':
-        newLeft = parseFloat($rail.css('left')) - item_width*items_quantity
-        break;
-      }
-
-      console.log('newLeft', newLeft)
-
-      console.log(minLeft)
-
-      if(newLeft < minLeft)
-        newLeft = minLeft
-      if(newLeft > maxLeft)
-        newLeft = maxLeft
-
-      console.log(newLeft)
-      $rail.css('left', newLeft)
-
+  function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16)
     })
   }
 
-  getPageData = function() {
-    var type
-
-    if( $('body').hasClass('single-product') ) {
-      type = 'single-product'
+  function getQueryParams() {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('#')[0].split('&')
+    for(var i = 0; i < hashes.length; i++) {
+      hash = hashes[i].split('=')
+      vars[hash[0]] = hash[1]
     }
 
-    else {
-      type = ''
-    }
-
-    return {
-      url: window.location.pathname + window.location.search,
-      type: type,
-      timestamp: new Date()
-    }
+    return vars
   }
 
 
 })( jQuery );
-
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16)
-  })
-}
-
-function getQueryParams() {
-  var vars = [], hash;
-  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('#')[0].split('&')
-  for(var i = 0; i < hashes.length; i++) {
-    hash = hashes[i].split('=')
-    vars[hash[0]] = hash[1]
-  }
-
-  return vars
-}

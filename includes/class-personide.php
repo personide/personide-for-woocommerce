@@ -187,6 +187,7 @@ class Personide {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		
+		$this->loader->add_action( 'init', $plugin_public, 'product_html' );
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load' );
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
 		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 1);
@@ -204,7 +205,6 @@ class Personide {
 		}
 		
 		add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
-
 		
 	}
 
