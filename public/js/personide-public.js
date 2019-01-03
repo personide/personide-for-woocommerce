@@ -13,6 +13,7 @@ window.onload = function() {
 
   var config = {
     accessKey: null,
+    state: {},
     services: {
       event: {
         host: 'connect.personide.com',
@@ -33,6 +34,15 @@ window.onload = function() {
     }
   }
 
+  // Initialize page session
+  var storage = JSON.parse(window.sessionStorage.getItem('PERSONIDE'))
+  if(!storage) {
+    storage = {
+      events: []
+    }
+    window.sessionStorage.setItem('PERSONIDE', JSON.stringify(storage))
+  }
+
   var session = {
     currentPage: {},
     uid: null
@@ -44,7 +54,11 @@ window.onload = function() {
 
   Personide.getKey = function() {
     return config.accessKey
-  }  
+  }
+
+  Personide.set = function(key, value) {
+    config.state[key] = value
+  }
 
   /**
   ** Bind event triggers to DOM events
@@ -52,24 +66,13 @@ window.onload = function() {
 
   Personide.init = function() {
 
-    if(session.uid !== null) {
-      this.dispatch({
-        event: '$set',
-        entityType: 'user',
-        entityId: session.uid,
-        properties: {
-          id: session.uid
-        }
-      })
-    }
-
     $('.add_to_cart_button.ajax_add_to_cart').click(function() {
-      this.dispatch({
+      Personide.dispatch({
         event: 'add-to-cart',
         entityType: 'user',
-        entityId: session.uid,
-        targetEntityType: 'product',
-        targetEntityId: $(this).data('product_id'),
+        entityId: '',
+        targetEntityType: 'item',
+        targetEntityId: String($(this).data('product_id')),
         properties: {
           quantity: $(this).data('quantity')
         }
@@ -77,15 +80,16 @@ window.onload = function() {
     })
 
     $('.woocommerce-cart-form__cart-item .product-remove .remove').click(function() {
-      this.dispatch({
+      Personide.dispatch({
         event: 'remove-from-cart',
         entityType: 'user',
-        entityId: session.uid,
-        targetEntityType: 'product',
+        entityId: '',
+        targetEntityType: 'item',
         targetEntityId: $(this).data('product_id'),
         properties: null
       })
     })
+
   }
 
 
@@ -96,9 +100,18 @@ window.onload = function() {
 
   Personide.populateWidget = function(name, id) {
 
-    console.log('# Populating widget')
+    if(config.state.currentPage === 'other') {
+      return
+    }
 
     var $container = $('.personide_container .listing')
+
+    if($container.length == 0) {
+      console.log('Personide container not found')
+      return
+    }
+
+    console.log('# Populating widget')
     var $template = $container.find('.item.template')
 
     var source = $('.personide_container').attr('data-type')
@@ -106,11 +119,13 @@ window.onload = function() {
     list = []
 
     var query =  {
-      page: personide_pagetype
+      page: config.state.currentPage
     }
 
+    console.log(config.state.currentPage)
+
     // @todo: move id to be set via backend
-    if(personide_pagetype == 'product')
+    if(config.state.currentPage == 'product')
       query.product_id = $('.product')[0].id.split('-')[1]
 
     $.ajax({
@@ -130,7 +145,7 @@ window.onload = function() {
           $item.removeClass('template')
 
           var querystring = $.param({
-            personide: personide_pagetype + '_' + source,
+            personide: config.state.currentPage + '_' + source,
           })
 
           if(item.url !== undefined) {
@@ -142,8 +157,6 @@ window.onload = function() {
           $item.find('.personide-product__link').attr('href', item.url)
           $item.find('.personide-product__price').text('Rs. '+item.sale_price)
           $container.append($item)
-
-          console.log(item)
         })
 
         $('<link/>', {
@@ -157,8 +170,8 @@ window.onload = function() {
             speed: 300,
             slidesToShow: 5,
             slidesToScroll: 3,
-            nextArrow: '<img class="slick-arrow slick-next" src="'+PERSONIDE_DIR+'img/right-arrow.png">',
-            prevArrow: '<img class="slick-arrow slick-prev" src="'+PERSONIDE_DIR+'img/left-arrow.png">',
+            nextArrow: '<img class="slick-arrow slick-next" src="'+config.state.pluginDirectory+'img/right-arrow.png">',
+            prevArrow: '<img class="slick-arrow slick-prev" src="'+config.state.pluginDirectory+'img/left-arrow.png">',
             respondTo: 'min',
             responsive: [
             {
@@ -202,15 +215,6 @@ window.onload = function() {
     })
   }
 
-  // Set new user if not exists
-
-  session.uid = window.localStorage.getItem('PRSN_ID')
-  if(session.uid === null) {
-    console.log('# Setting new user ')
-    session.uid = uuidv4()
-    window.localStorage.setItem('PRSN_ID', session.uid)
-  }
-
   /**
   ** dispatch events to personide connect
   **/
@@ -222,11 +226,14 @@ window.onload = function() {
     data = Object.assign(data, {eventTime: timestamp})
 
     if(data.entityType === 'user') {
-      data = Object.assign(data, {entityId: session.uid})
+      data = Object.assign(data, {entityId: ''})
     }
+
+    var storage = JSON.parse(window.sessionStorage.getItem('PERSONIDE'))
 
     if(data.event === 'view' || data.event === 'add-to-cart') {
       var query = getQueryParams()
+
       if(query.personide) {
         data = Object.assign(data, {
           meta: {
@@ -235,7 +242,27 @@ window.onload = function() {
           }
         })
       }
+
+      else if(data.event !== 'view') {
+        console.log(storage.events)
+        var sourceEvent = storage.events.find(function(item) {
+          // @todo: check inside meta instead of just its existence
+          return item.event === 'view' && item.meta !== undefined && item.targetEntityId == data.targetEntityId
+        })
+        if(sourceEvent !== undefined) {
+          Object.assign(data, {
+            meta: {
+              category: config.state.currentPage,
+              sourceElement: ''
+            }
+          })
+        }
+      }
     }
+
+    // @todo: consider moving to ajax success
+    storage.events.push(data)
+    window.sessionStorage.setItem('PERSONIDE', JSON.stringify(storage))
 
     console.log(data)
 
@@ -286,6 +313,17 @@ window.onload = function() {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16)
     })
+  }
+
+  function getCookie(name) {
+    var result = document.cookie.split(';').filter(item => item.includes(' '+name+'='))
+    if(result.length == 0)
+      return null
+    var pair = result.split('=')
+    return {
+      name: pair[0],
+      value: pair[1]
+    }
   }
 
   function getQueryParams() {

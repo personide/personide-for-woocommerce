@@ -67,8 +67,8 @@ class Personide {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'LOQUAT_VERSION' ) ) {
-			$this->version = LOQUAT_VERSION;
+		if ( defined( 'PERSONIDE_VERSION' ) ) {
+			$this->version = PERSONIDE_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -159,6 +159,8 @@ class Personide {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
+
+		// $this->loader->add_action('admin_init', $plugin_admin, 'lib_init', 1);
 
 		// Product $set
 		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'product_diff', 1, 3);

@@ -54,6 +54,7 @@ class Personide_Public {
 		$this->version = $version;
 		$this->logger = wc_get_logger();
 		$this->current_user_id = isset($_COOKIE['LQT_UID']) ? $_COOKIE['LQT_UID'] : '';
+		$this->events = [];
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
 	}
@@ -64,18 +65,6 @@ class Personide_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Personide_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Personide_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/personide-public.css', array(), $this->version, 'all' );
 
@@ -88,26 +77,11 @@ class Personide_Public {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Personide_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Personide_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
-		$options = get_option($this->plugin_name);
-		$access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
-
-		wc_enqueue_js("PERSONIDE_DIR = '".plugin_dir_url( __FILE__ )."'");
-
-		wp_enqueue_script( $this->plugin_name, "http://connect.personide.com/lib/js?id=".$options['access_token'], array( 'jquery' ), null, false );
+		$access_token = Personide_Util::get_option('access_token');
+		wp_enqueue_script( $this->plugin_name, "http://connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
 
@@ -115,29 +89,34 @@ class Personide_Public {
 
 		$options = get_option($this->plugin_name);
 
-		$access_token = (isset($options['access_token']) && !empty($options['access_token'])) ? $options['access_token'] : '';
+		$access_token = Personide_Util::get_option('access_token');
+		$pagetype = Personide_Util::get_pagetype();
 
-		// wc_enqueue_js("Personide.setKey('$access_token');");
-		
+		if( Personide_Util::get_option('remove_wc_related_products') == TRUE ) {
+			remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+		}
 
 		if ( is_product() ) {
 			global $post;
 			$product = wc_get_product( $post->ID );
  			// @todo skip following if product is in cart
-			$this->logger->debug( '# Viewing Product: ' . $product->get_title() );
-
 			$name = $product->get_title();
-			wc_enqueue_js( "console.log('Viewing Product: $name')" );
-			
 			$event_object = Personide_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
-			wc_enqueue_js( "Personide.dispatch($event_object)" );
+			array_push($this->events, $event_object);
 		}
 
-		$pagetype = $this->get_pagetype();
-		wc_enqueue_js( "personide_pagetype = '$pagetype'" );
+		// wc_enqueue_js("Personide.setKey('$access_token');");
+		// wc_enqueue_js("Personide.set('currentPage', '".$pagetype."')");
+		wc_enqueue_js("Personide.set('pluginDirectory', '".plugin_dir_url( __FILE__ )."')");
+
+		foreach( $this->events as $event ) {
+			wc_enqueue_js( "Personide.dispatch($event)" );
+		}
 	}
 
+
 	public function product_html() {
+
 		if ( isset( $_GET['personide_product_id'] ) ) {
 			global $product;
 			$id = $_GET['personide_product_id'];
@@ -146,7 +125,10 @@ class Personide_Public {
 			echo wc_get_template_html('/single-product/product-thumbnails.php', array('product' => $product));
 			die;
 		}
+
+
 	}
+
 
 	public function add_to_cart($cart_item_key, $product_id, $quantity) {
 
@@ -154,9 +136,9 @@ class Personide_Public {
 		$name = $product->get_title();
 
 		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
-		
-		wc_enqueue_js( "Personide.dispatch($event_object)" );
+		array_push($this->events, $event_object);
 	}
+
 
 	public function checkout($order_get_id) {
 		$this->logger->debug( '# Completing Order: ' . $order_get_id );
@@ -168,39 +150,32 @@ class Personide_Public {
 		);
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', $this->current_user_id, json_encode($properties), 'order', $order->get_id() );
-
-		wc_enqueue_js( "Personide.dispatch($event_object)" );
+		array_push($this->events, $event_object);
 	}
+
 
 	public function add_hotslot() {
 		echo $this->get_hotslot_html();
 	}
 
+
 	public function get_hotslot_html() {
 		return '
 		<div class="personide_container" data-priority=1 data-type="hotslot">
-	  <h1 class="personide_hotslot-title" class="center">You Must Have</h1>
-	  <div class="listing">
-	    <div class="template item personide-product">
-	      <a class="personide-product__link" href="">
-	        <img class="personide-product__picture" src=""/>
-	        <div class="personide-product__details">
-	          <p class="personide-product__name"></p>
-	          <p class="personide-product__price"></p>
-	        </div>
-	      </a>
-	    </div>
-	  </div>
-	</div>';
+	  	'.Personide_Util::get_option('hotslot_template').'
+		</div>
+	';
 	}
+
 
 	public function hotslot_shortcode() {
 		return $this->get_hotslot_html();
 	}
 
+
 	public function get_pagetype() {
 		global $wp_query;
-		$loop = 'notfound';
+		$loop = 'other';
 
 		if ( $wp_query->is_page ) {
 			$loop = is_front_page() ? 'front' : 'page';
@@ -232,6 +207,7 @@ class Personide_Public {
 
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/widgets/class-personide-widget-recommendations.php';
+
 
 function widget_register() {
 	register_widget( 'Personide_Widget_Recommendations' );

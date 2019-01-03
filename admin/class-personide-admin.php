@@ -101,10 +101,12 @@ class Personide_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-admin.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . '../public/js/personide-public.js', array( 'jquery' ), $this->version, false );
+		$access_token = Personide_Util::get_option('access_token');
+		wp_enqueue_script( $this->plugin_name, "http://connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
-
 
 	// @todo remove
 	public function get_payload($product) {
@@ -125,7 +127,6 @@ class Personide_Admin {
 		return $payload;
 	}
 
-
 	// @todo remove if unneccessary 
 	public function product_add($id) {
 		$this->logger->debug( 'New Product: ' . $id );
@@ -144,6 +145,7 @@ class Personide_Admin {
 
 				$properties = array(
 					'title' => $product->get_title(),
+					'sku' => $product->get_sku(),
 					'description' => $product->get_description(),
 					'url' => get_permalink($product->get_id()),
 					'in_stock' => $product->get_stock_status() === 'instock',
@@ -151,7 +153,8 @@ class Personide_Admin {
 					'sale_price' => $product->get_sale_price(),
 					'categories' => array_map(function($id) {
 						return get_term_by( 'id', $id, 'product_cat' )->slug;
-					}, $product->get_category_ids())
+					}, $product->get_category_ids()),
+
 				);
 
 				if ( in_array( $post_id, $this->new_products ) ) {
@@ -168,10 +171,12 @@ class Personide_Admin {
 		}
 	}
 
+
 	public function product_trash($id) {
 		$this->logger->debug( 'Trash Product: ' . $id );
 		$product = wc_get_product($id);
 		$event_object = Personide_Util::get_event( '$delete', 'item', $product->get_id() );
+		wc_enqueue_js( "Personide.dispatch($event_object)" );
 	}
 
 
@@ -191,9 +196,10 @@ class Personide_Admin {
 		if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
 	}
 
+///////////////////////////
 
 	public function add_menu() {
-		add_menu_page( 'Personide - Store Personalization', 'Personide', 'administrator', $this->plugin_name , array($this, 'register_menu'), '');
+		add_menu_page( 'Personide - General Settings', 'Personide', 'administrator', $this->plugin_name , array($this, 'register_menu'), plugin_dir_url( __FILE__ ) . '../assets/icon.png');
 		// add_options_page( 'Personide Settings', 'Personide', 'manage_options', 'personide', '' );
 	}
 
@@ -202,6 +208,7 @@ class Personide_Admin {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/personide-admin-display.php';
 	}
 
+///////////////////////////
 
 	// @todo remove
 	public function enqueue_script($code) {
@@ -211,21 +218,24 @@ class Personide_Admin {
 		$_SESSION['personide_admin_script'] = $_SESSION['personide_admin_script']."\n\n $code";
 	}
 
-	public function validate($input) {
-    // All checkboxes inputs        
-    $valid = array();
+//////////////////////////
 
-    //Cleanup
-    $valid['access_token'] = (isset($input['access_token']) && !empty($input['access_token'])) ? $input['access_token'] : '';
-    $valid['cleanup'] = (isset($input['cleanup']) && !empty($input['cleanup'])) ? $input['cleanup'] : '';
+	public function validate_all($input) {
 
+		$keys = ['access_token', 'remove_wc_related_products', 'hotslot_template'];
+		foreach ($keys as $key) {
+			$input[$key] = (isset($input[$key]) && !empty($input[$key])) ? $input[$key] : '';
+		}
 
-    return $valid;
- 	}
+		$input['remove_wc_related_products'] = ($input['remove_wc_related_products']) ? TRUE : FALSE;
 
+		// $this->logger->debug( 'Form input::cleaner : ' . print_r($input, TRUE) );
+
+		return $input;
+	}
 
 
 	public function options_update() {
-    register_setting($this->plugin_name, $this->plugin_name, array($this, 'validate'));
+		register_setting($this->plugin_name, $this->plugin_name, array($this, 'validate_all'));
 	}
 }
