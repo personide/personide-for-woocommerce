@@ -251,18 +251,3 @@ class Personide {
 	}
 
 }
-
-echo session_id();
-
-if(!session_id()) {
-	session_start();
-}
-
-
-function register_session() {
-	if(!session_id()) {
-		session_start();
-	}
-}
-
-add_action( 'init', 'register_session');
