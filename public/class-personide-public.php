@@ -53,7 +53,6 @@ class Personide_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->logger = wc_get_logger();
-		$this->current_user_id = isset($_COOKIE['LQT_UID']) ? $_COOKIE['LQT_UID'] : '';
 		$this->events = [];
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
@@ -101,7 +100,7 @@ class Personide_Public {
 			$product = wc_get_product( $post->ID );
  			// @todo skip following if product is in cart
 			$name = $product->get_title();
-			$event_object = Personide_Util::get_event( 'view', 'user', $this->current_user_id, NULL, 'item', $product->get_id());
+			$event_object = Personide_Util::get_event( 'view', 'user', '', NULL, 'item', $product->get_id());
 			array_push($this->events, $event_object);
 		}
 
@@ -135,7 +134,7 @@ class Personide_Public {
 		$product = wc_get_product( $product_id );
 		$name = $product->get_title();
 
-		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', $this->current_user_id, NULL, 'item', $product->get_id() );
+		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', '', NULL, 'item', $product->get_id() );
 		array_push($this->events, $event_object);
 	}
 
@@ -149,7 +148,7 @@ class Personide_Public {
 			'items' => array_keys($items)
 		);
 
-		$event_object = Personide_Util::get_event( 'purchase', 'user', $this->current_user_id, json_encode($properties), 'order', $order->get_id() );
+		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'order', $order->get_id() );
 		array_push($this->events, $event_object);
 	}
 
