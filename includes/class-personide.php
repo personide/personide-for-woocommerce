@@ -198,7 +198,7 @@ class Personide {
 			'woocommerce_before_cart',
 			'woocommerce_before_shop_loop',
 			'woocommerce_before_single_product',
-			'woocommerce_before_checkout_form'
+			// 'woocommerce_before_checkout_form',
 		];
 
 		// @todo: filter hooks by enabled from settings 
