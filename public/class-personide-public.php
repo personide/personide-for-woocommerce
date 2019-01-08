@@ -108,6 +108,10 @@ class Personide_Public {
 		// wc_enqueue_js("Personide.set('currentPage', '".$pagetype."')");
 		wc_enqueue_js("Personide.set('pluginDirectory', '".plugin_dir_url( __FILE__ )."')");
 
+		
+	}
+
+	public function all_loaded() {
 		foreach( $this->events as $event ) {
 			wc_enqueue_js( "Personide.dispatch($event)" );
 		}
@@ -124,7 +128,6 @@ class Personide_Public {
 			echo wc_get_template_html('/single-product/product-thumbnails.php', array('product' => $product));
 			die;
 		}
-
 
 	}
 
@@ -148,7 +151,7 @@ class Personide_Public {
 			'items' => array_keys($items)
 		);
 
-		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'order', $order->get_id() );
+		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
 		array_push($this->events, $event_object);
 	}
 
