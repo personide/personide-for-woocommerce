@@ -102,6 +102,7 @@ class Personide_Public {
 			$name = $product->get_title();
 			$event_object = Personide_Util::get_event( 'view', 'user', '', NULL, 'item', $product->get_id());
 			array_push($this->events, $event_object);
+			wc_enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
 		}
 
 		// wc_enqueue_js("Personide.setKey('$access_token');");
