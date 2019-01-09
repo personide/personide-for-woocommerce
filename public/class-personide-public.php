@@ -79,7 +79,8 @@ class Personide_Public {
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
 		$access_token = Personide_Util::get_option('access_token');
-		wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		// wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
 		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
@@ -108,8 +109,7 @@ class Personide_Public {
 		// wc_enqueue_js("Personide.setKey('$access_token');");
 		// wc_enqueue_js("Personide.set('currentPage', '".$pagetype."')");
 		wc_enqueue_js("Personide.set('pluginDirectory', '".plugin_dir_url( __FILE__ )."')");
-
-		
+		wc_enqueue_js("Personide.init()");
 	}
 
 	public function all_loaded() {
@@ -149,8 +149,10 @@ class Personide_Public {
 
 		$items = $order->get_items();
 		$properties = array(
-			'items' => array_keys($items)
+			'items' => $items
 		);
+
+		$this->logger->debug(print_r($properties, TRUE));
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
 		array_push($this->events, $event_object);

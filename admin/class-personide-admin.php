@@ -104,6 +104,7 @@ class Personide_Admin {
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . '../public/js/personide-public.js', array( 'jquery' ), $this->version, false );
 		$access_token = Personide_Util::get_option('access_token');
 		wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
 		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
@@ -114,12 +115,17 @@ class Personide_Admin {
 			'id' => $product->get_id(),
 			'sku' => $product->get_sku(),
 			'title' => $product->get_title(),
+			'description' => $product->get_short_description() . '\n' . $product->get_description(),
 			'in_stock' => $product->is_in_stock(),
+			'on_sale' => $product->is_on_sale(),
 			'sale_price' => $product->get_sale_price(),
 			'regular_price' => $product->get_regular_price(),
 			'categroies' => array_map(function($id) {
 				return get_term_by( 'id', $id, 'product_cat' )->slug;
-			}, $product->get_category_ids())
+			}, $product->get_category_ids()),
+			'url' => $product->get_permalink(),
+			// 'image_url' => $product->get_image()
+			'image_url' => 'hallo'
 		);
 
 		$payload = json_encode($payload);
@@ -144,17 +150,19 @@ class Personide_Admin {
 				$product = wc_get_product( $post_id );
 
 				$properties = array(
-					'title' => $product->get_title(),
-					'sku' => $product->get_sku(),
-					'description' => $product->get_description(),
-					'url' => get_permalink($product->get_id()),
-					'in_stock' => $product->get_stock_status() === 'instock',
-					'regular_price' => $product->get_regular_price(),
-					'sale_price' => $product->get_sale_price(),
-					'categories' => array_map(function($id) {
-						return get_term_by( 'id', $id, 'product_cat' )->slug;
-					}, $product->get_category_ids()),
-
+				'id' => $product->get_id().'',
+				'sku' => $product->get_sku(),
+				'title' => $product->get_title(),
+				'description' => $product->get_short_description() . '\n' . $product->get_description(),
+				'in_stock' => $product->is_in_stock(),
+				'on_sale' => $product->is_on_sale(),
+				'sale_price' => $product->get_sale_price(),
+				'regular_price' => $product->get_regular_price(),
+				'categroies' => array_map(function($id) {
+					return get_term_by( 'id', $id, 'product_cat' )->slug;
+				}, $product->get_category_ids()),
+				'url' => $product->get_permalink(),
+				'image_url' => get_the_post_thumbnail_url($product->get_id())
 				);
 
 				if ( in_array( $post_id, $this->new_products ) ) {

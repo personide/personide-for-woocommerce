@@ -25,8 +25,8 @@ p.personide-product__price {color: #777;}
 .personide_container .slick-slide img {display: inherit;}
 .personide_container .slick-arrow {position: absolute; padding: 10px; box-sizing: content-box; top: 50%; transform: translateY(-50%); height: 16px; width: auto; cursor: pointer; border-radius: 50%; z-index: 2;}
 .personide_container .slick-arrow:hover {background: #ddd;}
-.personide_container .slick-prev {left: -20px}
-.personide_container .slick-next {right: -20px}
+.personide_container .slick-prev {left: -24px}
+.personide_container .slick-next {right: -24px}
 
 
 
