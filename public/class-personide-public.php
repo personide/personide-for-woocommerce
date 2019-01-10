@@ -56,8 +56,6 @@ class Personide_Public {
 		$this->events = [];
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
-
-		$this->logger->debug('Loading personide public class');
 	}
 
 	/**

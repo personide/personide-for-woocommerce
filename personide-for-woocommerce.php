@@ -78,13 +78,12 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-personide.php';
  * @since    1.0.0
  */
 function run_personide() {
-
 	$plugin = new Personide();
 	$plugin->run();
-
-	// register widget
-
 }
 
-add_action('woocommerce_loaded', 'run_personide', 0);
-// run_personide();
+if(in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) )) {
+  add_action('woocommerce_init', function() {
+    run_personide();
+  });
+}
