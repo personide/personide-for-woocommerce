@@ -56,6 +56,8 @@ class Personide_Public {
 		$this->events = [];
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
+
+		$this->logger->debug('Loading personide public class');
 	}
 
 	/**
@@ -103,6 +105,7 @@ class Personide_Public {
 			$name = $product->get_title();
 			$event_object = Personide_Util::get_event( 'view', 'user', '', NULL, 'item', $product->get_id());
 			array_push($this->events, $event_object);
+			$this->logger->debug('Viewing Product: '.$product->get_id());
 			wc_enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
 		}
 
@@ -157,8 +160,6 @@ class Personide_Public {
 		$properties = array(
 			'items' => $items
 		);
-
-		$this->logger->debug(print_r($properties, TRUE));
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
 		array_push($this->events, $event_object);
