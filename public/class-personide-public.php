@@ -79,8 +79,8 @@ class Personide_Public {
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
 		$access_token = Personide_Util::get_option('access_token');
-		// wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
-		wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
 		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
@@ -148,6 +148,12 @@ class Personide_Public {
 		$order = new WC_Order($order_get_id);
 
 		$items = $order->get_items();
+
+		function itemsToProductIds($item) {
+			return $item->get_product_id();
+		}
+
+		$items = array_values(array_map("itemsToProductIds", $items));
 		$properties = array(
 			'items' => $items
 		);
