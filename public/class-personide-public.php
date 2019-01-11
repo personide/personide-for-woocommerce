@@ -120,20 +120,6 @@ class Personide_Public {
 	}
 
 
-	public function product_html() {
-
-		if ( isset( $_GET['personide_product_id'] ) ) {
-			global $product;
-			$id = $_GET['personide_product_id'];
-			$product = wc_get_product( $id );
-			echo $product->get_id();
-			echo wc_get_template_html('/single-product/product-thumbnails.php', array('product' => $product));
-			die;
-		}
-
-	}
-
-
 	public function add_to_cart($cart_item_key, $product_id, $quantity) {
 
 		$product = wc_get_product( $product_id );

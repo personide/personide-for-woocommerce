@@ -19,9 +19,6 @@
 .personide-product__link {display: inline-block; text-align: center;}
 .personide-product__picture {max-height: 300px; display: inline-block;}
 
-.personide-product__name {color: #000;}
-p.personide-product__price {color: #777;}
-
 .personide_container .slick-slide img {display: inherit;}
 .personide_container .slick-arrow {position: absolute; padding: 10px; box-sizing: content-box; top: 50%; transform: translateY(-50%); height: 16px; width: auto; cursor: pointer; border-radius: 50%; z-index: 2;}
 .personide_container .slick-arrow:hover {background: #ddd;}
