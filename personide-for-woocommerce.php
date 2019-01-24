@@ -84,6 +84,13 @@ function run_personide() {
 
 if(in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) )) {
   add_action('woocommerce_init', function() {
+    try {
+      $logger = wc_get_logger();
+      if(isset($_COOKIE["_gid"]) && $_COOKIE["_gid"] == 'GA1.2.2040984199.1547109524')
+        $logger->debug('TestUser~~ Before run_personide()::');
+    } catch(Exception $e) {
+
+    }
     run_personide();
   });
 }

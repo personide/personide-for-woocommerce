@@ -109,30 +109,6 @@ class Personide_Admin {
 
 	}
 
-	// @todo remove
-	public function get_payload($product) {
-		$payload = array(
-			'id' => $product->get_id(),
-			'sku' => $product->get_sku(),
-			'title' => $product->get_title(),
-			'description' => $product->get_short_description() . '\n' . $product->get_description(),
-			'in_stock' => $product->is_in_stock(),
-			'on_sale' => $product->is_on_sale(),
-			'sale_price' => $product->get_sale_price(),
-			'regular_price' => $product->get_regular_price(),
-			'categroies' => array_map(function($id) {
-				return get_term_by( 'id', $id, 'product_cat' )->slug;
-			}, $product->get_category_ids()),
-			'url' => $product->get_permalink(),
-			// 'image_url' => $product->get_image()
-			'image_url' => 'hallo'
-		);
-
-		$payload = json_encode($payload);
-
-		return $payload;
-	}
-
 	// @todo remove if unneccessary 
 	public function product_add($id) {
 		$this->logger->debug( 'New Product: ' . $id );
@@ -150,19 +126,19 @@ class Personide_Admin {
 				$product = wc_get_product( $post_id );
 
 				$properties = array(
-				'id' => $product->get_id().'',
-				'sku' => $product->get_sku(),
-				'title' => $product->get_title(),
-				'description' => $product->get_short_description() . '\n' . $product->get_description(),
-				'in_stock' => $product->is_in_stock(),
-				'on_sale' => $product->is_on_sale(),
-				'sale_price' => $product->get_sale_price(),
-				'regular_price' => $product->get_regular_price(),
-				'categroies' => array_map(function($id) {
-					return get_term_by( 'id', $id, 'product_cat' )->slug;
-				}, $product->get_category_ids()),
-				'url' => $product->get_permalink(),
-				'image_url' => get_the_post_thumbnail_url($product->get_id())
+					'id' => $product->get_id().'',
+					'sku' => $product->get_sku(),
+					'title' => $product->get_title(),
+					'description' => $product->get_short_description() . '\n' . $product->get_description(),
+					'in_stock' => $product->is_in_stock(),
+					'on_sale' => $product->is_on_sale(),
+					'sale_price' => $product->get_sale_price(),
+					'regular_price' => $product->get_regular_price(),
+					'categroies' => array_map(function($id) {
+						return get_term_by( 'id', $id, 'product_cat' )->slug;
+					}, $product->get_category_ids()),
+					'url' => $product->get_permalink(),
+					'image_url' => get_the_post_thumbnail_url($product->get_id())
 				);
 
 				if ( in_array( $post_id, $this->new_products ) ) {
@@ -180,11 +156,13 @@ class Personide_Admin {
 	}
 
 
+	// @todo: doesn't work because it fires before page reload 
 	public function product_trash($id) {
-		$this->logger->debug( 'Trash Product: ' . $id );
-		$product = wc_get_product($id);
-		$event_object = Personide_Util::get_event( '$delete', 'item', $product->get_id() );
-		wc_enqueue_js( "Personide.dispatch($event_object)" );
+		if ( get_post_type( $id ) == 'product' ) {
+			$this->logger->debug( 'Trash Product: ' . $id );
+			$event_object = Personide_Util::get_event( '$delete', 'item', $id );
+			wc_enqueue_js( "Personide.dispatch($event_object)" );
+		}
 	}
 
 
@@ -192,7 +170,6 @@ class Personide_Admin {
 
 		if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
 
-		$code = '';
 		$label = null;
 
 		if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
@@ -208,22 +185,11 @@ class Personide_Admin {
 
 	public function add_menu() {
 		add_menu_page( 'Personide - General Settings', 'Personide', 'administrator', $this->plugin_name , array($this, 'register_menu'), plugin_dir_url( __FILE__ ) . '../assets/icon.png');
-		// add_options_page( 'Personide Settings', 'Personide', 'manage_options', 'personide', '' );
 	}
 
 
 	public function register_menu() {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/personide-admin-display.php';
-	}
-
-///////////////////////////
-
-	// @todo remove
-	public function enqueue_script($code) {
-		if(empty($_SESSION['personide_admin_script']))
-			$_SESSION['personide_admin_script'] = '';
-
-		$_SESSION['personide_admin_script'] = $_SESSION['personide_admin_script']."\n\n $code";
 	}
 
 //////////////////////////
@@ -236,8 +202,6 @@ class Personide_Admin {
 		}
 
 		$input['remove_wc_related_products'] = ($input['remove_wc_related_products']) ? TRUE : FALSE;
-
-		// $this->logger->debug( 'Form input::cleaner : ' . print_r($input, TRUE) );
 
 		return $input;
 	}

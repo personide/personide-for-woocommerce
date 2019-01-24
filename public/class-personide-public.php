@@ -75,13 +75,12 @@ class Personide_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
 		$access_token = Personide_Util::get_option('access_token');
-		wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		$wpes = wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
 		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
-		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
+		$wais = wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
 
@@ -90,7 +89,7 @@ class Personide_Public {
 		$options = get_option($this->plugin_name);
 
 		$access_token = Personide_Util::get_option('access_token');
-		$pagetype = Personide_Util::get_pagetype();
+		$pagedata = Personide_Util::get_pagedata();
 
 		if( Personide_Util::get_option('remove_wc_related_products') == TRUE ) {
 			remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
@@ -101,11 +100,29 @@ class Personide_Public {
 			$product = wc_get_product( $post->ID );
  			// @todo skip following if product is in cart
 			$name = $product->get_title();
-			$event_object = Personide_Util::get_event( 'view', 'user', '', NULL, 'item', $product->get_id());
-			array_push($this->events, $event_object);
-			$this->logger->debug('Viewing Product: '.$product->get_id());
 			wc_enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
 		}
+
+		array_push($this->events, $pagedata['event']);
+
+		// @todo Crap that doesn't work but needs to be dealt with
+
+		// $cart = new WC_Cart();
+
+		// $this->logger->debug(print_r($cart, TRUE));		
+
+		// $items = $cart->get_cart_contents();
+
+		// function itemsToProductIds($item) {
+			// return strval($item['data']->get_id());
+		// }
+
+		// $this->logger->debug(print_r($items, TRUE));
+		// $items = array_map("itemsToProductIds", $items);
+		// $this->logger->debug(print_r($items, TRUE));
+
+		// wc_enqueue_js("Personide.set('currentCartIds', '".json_encode($items)."')");
+		// wc_enqueue_js("console.log('".json_encode($items)."')");
 
 		// wc_enqueue_js("Personide.setKey('$access_token');");
 		// wc_enqueue_js("Personide.set('currentPage', '".$pagetype."')");
@@ -131,13 +148,12 @@ class Personide_Public {
 
 
 	public function checkout($order_get_id) {
-		$this->logger->debug( '# Completing Order: ' . $order_get_id );
 		$order = new WC_Order($order_get_id);
 
 		$items = $order->get_items();
 
 		function itemsToProductIds($item) {
-			return $item->get_product_id();
+			return strval($item->get_product_id());
 		}
 
 		$items = array_values(array_map("itemsToProductIds", $items));
@@ -158,46 +174,14 @@ class Personide_Public {
 	public function get_hotslot_html() {
 		return '
 		<div class="personide_container" data-priority=1 data-type="hotslot">
-	  	'.Personide_Util::get_option('hotslot_template').'
+		'.Personide_Util::get_option('hotslot_template').'
 		</div>
-	';
+		';
 	}
 
 
 	public function hotslot_shortcode() {
 		return $this->get_hotslot_html();
-	}
-
-
-	public function get_pagetype() {
-		global $wp_query;
-		$loop = 'other';
-
-		if ( $wp_query->is_page ) {
-			$loop = is_front_page() ? 'front' : 'page';
-		}
-
-		if ( is_product() ) {
-			$loop = 'product';
-		} elseif ( is_shop() ) {
-			$loop = 'listing';
-		} elseif ( is_product_category() ) {
-			$loop = 'category';
-		} elseif ( is_product_tag() ) {
-			$loop = 'tag';
-		} elseif ( is_product_taxonomy() ) {
-			$loop = 'taxonomy';
-		} elseif ( is_cart() ) {
-			$loop = 'cart';
-		} elseif ( is_checkout() ) {
-			$loop = 'checkout';
-		} elseif ( $wp_query->is_search ) {
-			$loop = 'search';
-		} elseif ( $wp_query->is_404 ) {
-			$loop = 'notfound';
-		}
-
-		return $loop;
 	}
 }
 

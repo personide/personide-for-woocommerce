@@ -12,7 +12,6 @@
 	/*box-shadow: 0 0 0 1px #efefef;*/ text-align: center; font-size: 16px; border-radius: 5px; overflow: hidden;
 }
 
-
 .personide-product__details {padding: 10px;}
 .personide-product__details > p {margin: 0; color: #000; padding-bottom: 10px;}
 
@@ -24,30 +23,3 @@
 .personide_container .slick-arrow:hover {background: #ddd;}
 .personide_container .slick-prev {left: -24px}
 .personide_container .slick-next {right: -24px}
-
-
-
-/*@media screen and (max-width: 320px) {
-	.personide_container .personide-product {width: 100%;}
-}
-
-@media screen and (max-width: 640px) {
-	.personide_container .personide-product {width: calc(50% - 30px);}
-}*/
-
-
-/***** RAIL *****/
-
-.rail-slider .container {position: relative;}
-
-.rail-navigation { cursor: pointer; display: block; position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;}
-
-.rail-navigation.prev {left: -20px}
-.rail-navigation.next {right: -20px}
-
-img.rail-navigation {max-width: 20px}
-
-.frame {position: relative; overflow: hidden; margin: 0 auto;}
-.rail {position: relative; left: 0; padding: 10px 0;  width: 100%; transition: all 1s ease; font-size: 0; white-space: nowrap;}
-.rail .item {white-space: normal; vertical-align: top}
-.rail .item {display: inline-block; float: none;}

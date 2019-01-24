@@ -78,8 +78,6 @@ class Personide {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
-		// add_action( 'init', array($this, 'register_session') );
 	}
 
 	/**
@@ -189,21 +187,22 @@ class Personide {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load' );
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load', 1);
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
 		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 1);
-		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded' );
+		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
 
 		$hotslot_hooks = [
 			'woocommerce_before_cart',
 			'woocommerce_before_shop_loop',
-			'woocommerce_before_single_product',
+			// 'woocommerce_after_single_product',
+			'woocommerce_after_single_product_summary',
 			// 'woocommerce_before_checkout_form',
 		];
 
 		// @todo: filter hooks by enabled from settings 
 		foreach($hotslot_hooks as $hook) {
-			$this->loader->add_action( $hook, $plugin_public, 'add_hotslot');	
+			$this->loader->add_action( $hook, $plugin_public, 'add_hotslot', 1);	
 		}
 		
 		add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
