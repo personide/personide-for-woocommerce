@@ -47,7 +47,6 @@ $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
   __FILE__,
   'personide-for-woocommerce' 
 );
-var_dump($MyUpdateChecker);
 
 /**
  * The code that runs during plugin activation.
