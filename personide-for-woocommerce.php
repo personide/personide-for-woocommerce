@@ -14,7 +14,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Personide for WooCommerce
- * Plugin URI:        http://www.personide.com/plugins/woocommerce/download
+ * Plugin URI:        http://www.personide.com
  * Description:       Integrate Personide and personalize your customers' experience
  * Version:           1.0.1
  * Author:            Personide
