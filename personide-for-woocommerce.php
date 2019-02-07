@@ -16,7 +16,7 @@
  * Plugin Name:       Personide for WooCommerce
  * Plugin URI:        http://www.personide.com/plugins/woocommerce/download
  * Description:       Integrate Personide and personalize your customers' experience
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Personide
  * Author URI:        http://www.personide.com
  * License:           GPL-2.0+
@@ -39,7 +39,15 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PERSONIDE_VERSION', '1.0.0' );
+define( 'PERSONIDE_VERSION', '1.0.1' );
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-update-checker/plugin-update-checker.php';
+$MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+  'http://18.136.134.232/woocommerce/?action=get_metadata&slug=personide-for-woocommerce',
+  __FILE__,
+  'personide-for-woocommerce' 
+);
+var_dump($MyUpdateChecker);
 
 /**
  * The code that runs during plugin activation.
