@@ -87,15 +87,14 @@ class Personide_Util {
 			$type = 'notfound';
 		}
 
+		$data["properties"] = $properties;
 		$properties = $properties == NULL ? $properties : json_encode($properties);
 		
 		$data['event'] = self::get_event( 'view', 'user', '', $properties, $type, $id);
-		
 		$data['type'] = !empty($data['type']) ? $data['type'] : $type;
 
 		return ($key) ? $data[$key] : $data;
 	}
-
 }
 
 ?>

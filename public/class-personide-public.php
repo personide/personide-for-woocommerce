@@ -103,6 +103,10 @@ class Personide_Public {
 			wc_enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
 		}
 
+		if( is_product_category() ) {
+			wc_enqueue_js("Personide.set('categoryName', '". ($pagedata['properties']["name"]) ."')");
+		}
+
 		array_push($this->events, $pagedata['event']);
 
 		// @todo Crap that doesn't work but needs to be dealt with
