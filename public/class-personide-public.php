@@ -156,13 +156,24 @@ class Personide_Public {
 
 		$items = $order->get_items();
 
-		function itemsToProductIds($item) {
-			return strval($item->get_product_id());
+		function itemsToProducts($item) {
+			$product = $item->get_product();
+			return Array(
+				'id' => strval($product->get_id()),
+				'variation_id' => $item->get_variation_id(),
+				'price' => 	$product->get_price(),
+				'quantity' => $item->get_quantity(),
+				'categories' => array_map(function($id) {
+					return get_term_by( 'id', $id, 'product_cat' )->slug;
+				}, $product->get_category_ids())
+			);
 		}
 
-		$items = array_values(array_map("itemsToProductIds", $items));
+		$items = array_values(array_map("itemsToProducts", $items));
+
 		$properties = array(
-			'items' => $items
+			'items' => $items,
+			'total_amount' => $order->get_total()
 		);
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
