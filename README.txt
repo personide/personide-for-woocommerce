@@ -11,7 +11,7 @@ Personalize your ecommerce customers' experience with Personide platform
 
 == Description ==
 
-
+Personide seamlessly integrates with your woocommerce store and makes your customers' experience a breeze by optimizing the products visibility through personalization.
 
 == Installation ==
 
@@ -21,4 +21,8 @@ Personalize your ecommerce customers' experience with Personide platform
 
 == Changelog ==
 
-= 1.0.1 =
+= 1.1.0 =
+
+Enhancement - Add recently viewed products on every page
+Enhancement - Add category page recommendations
+Enhancement - Add cart page recommendations

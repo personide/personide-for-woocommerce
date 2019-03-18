@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              http://www.quanrio.com
- * @since             1.0.0
+ * @since             1.1.0
  * @package           Personide
  *
  * @wordpress-plugin
  * Plugin Name:       Personide for WooCommerce
  * Plugin URI:        http://www.personide.com
  * Description:       Integrate Personide and personalize your customers' experience
- * Version:           1.0.1
+ * Version:           1.1.0
  * Author:            Personide
  * Author URI:        http://www.personide.com
  * License:           GPL-2.0+
@@ -36,10 +36,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PERSONIDE_VERSION', '1.0.1' );
+define( 'PERSONIDE_VERSION', '1.1.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-update-checker/plugin-update-checker.php';
 $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
