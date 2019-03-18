@@ -78,8 +78,8 @@ class Personide_Public {
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
 
 		$access_token = Personide_Util::get_option('access_token');
-		$wpes = wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
-		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
+		// $wpes = wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js/".$access_token, array( 'jquery' ), null, false );
+		wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js/".$access_token, array( 'jquery' ), null, false );
 		$wais = wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 
 	}
@@ -111,22 +111,16 @@ class Personide_Public {
 
 		// @todo Crap that doesn't work but needs to be dealt with
 
-		// $cart = new WC_Cart();
+		$items = WC()->cart->get_cart();
 
-		// $this->logger->debug(print_r($cart, TRUE));		
+		function itemsToProductIds($item) {
+			return strval($item['data']->get_id());
+		}
 
-		// $items = $cart->get_cart_contents();
+		$items = array_values(array_map("itemsToProductIds", $items));
 
-		// function itemsToProductIds($item) {
-			// return strval($item['data']->get_id());
-		// }
-
-		// $this->logger->debug(print_r($items, TRUE));
-		// $items = array_map("itemsToProductIds", $items);
-		// $this->logger->debug(print_r($items, TRUE));
-
-		// wc_enqueue_js("Personide.set('currentCartIds', '".json_encode($items)."')");
-		// wc_enqueue_js("console.log('".json_encode($items)."')");
+		wc_enqueue_js("Personide.set('cartProductIds', ".json_encode($items).")");
+		wc_enqueue_js("console.log('".json_encode($items)."')");
 
 		// wc_enqueue_js("Personide.setKey('$access_token');");
 		// wc_enqueue_js("Personide.set('currentPage', '".$pagetype."')");
@@ -181,22 +175,44 @@ class Personide_Public {
 	}
 
 
-	public function add_hotslot() {
-		echo $this->get_hotslot_html();
+	public function add_hotslot($type) {
+		echo $this->get_hotslot_html($type);
 	}
 
 
-	public function get_hotslot_html() {
+	public function get_hotslot_html($strategy = NULL) {
+		$default = '
+			<h1 class="personide_hotslot-title center"></h1>
+			<div class="listing">
+			  <div class="template item personide-product">
+			    <a class="personide-product__link" href="">
+			      <img class="personide-product__picture" src=""/>
+			      <div class="personide-product__details">
+			        <p class="personide-product__name"></p>
+			        <p class="personide-product__price"></p>
+			      </div>
+			    </a>
+			  </div>
+			</div>
+		';
+		
+		$template = Personide_Util::get_option('hotslot_template');
+		
+		if(strlen($template) == 0) {
+			$template = $default;
+		}
+		
 		return '
-		<div class="personide_container" data-priority=1 data-type="hotslot">
-		'.Personide_Util::get_option('hotslot_template').'
+		<div class="personide_container" data-priority=1 data-container="hotslot" data-type="'.$strategy.'">
+		'.$template.'
 		</div>
 		';
 	}
 
 
-	public function hotslot_shortcode() {
-		return $this->get_hotslot_html();
+	public function hotslot_shortcode($atts) {
+		$type = (is_array($atts)) ? $atts['type'] : NULL;
+		return $this->get_hotslot_html($type);
 	}
 }
 

@@ -73,6 +73,7 @@ class Personide {
 			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'personide';
+		$this->plugin_public = NULL;
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -168,7 +169,7 @@ class Personide {
 
 		// product $delete
 		// $this->loader->add_action( 'woocommerce_trash_product', $plugin_admin, 'product_trash', 1, 1);
-		$this->loader->add_action( 'wp_trash_post', $plugin_admin, 'product_trash' );
+		$this->loader->add_action( 'trashed_post', $plugin_admin, 'product_trash' );
 
 		$this->loader->add_action('admin_init', $plugin_admin, 'options_update');
 	}
@@ -183,6 +184,7 @@ class Personide {
 	private function define_public_hooks() {
 
 		$plugin_public = new Personide_Public( $this->get_plugin_name(), $this->get_version() );
+		$this->plugin_public = $plugin_public;
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -192,21 +194,44 @@ class Personide {
 		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 1);
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
 
-		$hotslot_hooks = [
-			'woocommerce_before_cart',
-			'woocommerce_before_shop_loop',
-			// 'woocommerce_after_single_product',
-			'woocommerce_after_single_product_summary',
-			// 'woocommerce_before_checkout_form',
-		];
+		$placements = array(
+			
+			'' => array(
+				'hooks' => [
+					'woocommerce_after_cart',
+					'woocommerce_before_shop_loop',
+					// 'woocommerce_after_single_product',
+					'woocommerce_after_single_product_summary',
+					// 'woocommerce_before_checkout_form',
+				]
+			),
+			
+			'recently_viewed' => array(
+				'hooks' => [
+					'get_footer'
+				]
+			)
+		);
 
-		// @todo: filter hooks by enabled from settings 
-		foreach($hotslot_hooks as $hook) {
-			$this->loader->add_action( $hook, $plugin_public, 'add_hotslot', 1);	
+		foreach ((array)$placements as $type => $placement) {
+
+			$hooks = $placement['hooks'];
+
+			// @todo: filter hooks by enabled from settings 
+			foreach($hooks as $hook) {
+
+				// $this->loader->add_action( $hook, NULL, function() {
+				// 	global $type;
+				// 	$plugin_public->add_hotslot($type);
+				// }, 1);
+
+				add_action($hook, function() use ($type) {
+					$this->plugin_public->add_hotslot($type);
+				}, 0);
+			}
 		}
-		
+
 		add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
-		
 	}
 
 	/**

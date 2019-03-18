@@ -162,6 +162,7 @@ class Personide_Admin {
 			$this->logger->debug( 'Trash Product: ' . $id );
 			$event_object = Personide_Util::get_event( '$delete', 'item', $id );
 			wc_enqueue_js( "Personide.dispatch($event_object)" );
+			wc_enqueue_js( "console.log(RemovingProduct, $id)" );
 		}
 	}
 
@@ -171,11 +172,19 @@ class Personide_Admin {
 		if(get_post_type($post->ID) !== 'product' || empty($post->ID)) return;
 
 		$label = null;
+		$id = $post->ID;
 
 		if ( ( $old_status == 'draft' || $old_status == 'trash' ) && $new_status == 'publish' ) {
 			
 			$label = 'New Product';
 			array_push( $this->new_products, $post->ID );
+		}
+
+		if( $new_status == 'trash' ) {
+			$label = 'Trash Product';
+			$event_object = Personide_Util::get_event( '$delete', 'item', $id );
+			wc_enqueue_js( "Personide.dispatch($event_object)" );
+			wc_enqueue_js( "console.log(RemovingProduct, $id)" );
 		}
 
 		if($label) $this->logger->debug( $label . ' - ' . $post->ID . ' : ' . $product->name );
