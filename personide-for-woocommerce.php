@@ -16,7 +16,7 @@
  * Plugin Name:       Personide for WooCommerce
  * Plugin URI:        http://www.personide.com
  * Description:       Integrate Personide and personalize your customers' experience
- * Version:           1.1.1
+ * Version:           1.1.2
  * Author:            Personide
  * Author URI:        http://www.personide.com
  * License:           GPL-2.0+
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  */
-define( 'PERSONIDE_VERSION', '1.1.1' );
+define( 'PERSONIDE_VERSION', '1.1.2' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-update-checker/plugin-update-checker.php';
 $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
@@ -89,13 +89,8 @@ function run_personide() {
 
 if(in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) )) {
   add_action('woocommerce_init', function() {
-    try {
-      $logger = wc_get_logger();
-      if(isset($_COOKIE["_gid"]) && $_COOKIE["_gid"] == 'GA1.2.2040984199.1547109524')
-        $logger->debug('TestUser~~ Before run_personide()::');
-    } catch(Exception $e) {
-
-    }
+    $logger = wc_get_logger();
+    $logger->debug("---- Launching Personide for WooCommerce ----", array( 'source' => 'personide' ));
     run_personide();
   });
 }

@@ -75,10 +75,15 @@ class Personide {
 		$this->plugin_name = 'personide';
 		$this->plugin_public = NULL;
 
+		$this->logger = wc_get_logger();
+		$this->context = array( 'source' => 'personide' );
+
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+
+		$this->logger->debug("Created main class instance", $this->context);
 	}
 
 	/**
@@ -191,7 +196,7 @@ class Personide {
 		
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load', 1);
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
-		$this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'checkout', 10, 1);
+		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'checkout', 10, 2);
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
 
 		$placements = array(

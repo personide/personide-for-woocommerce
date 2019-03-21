@@ -53,10 +53,12 @@ class Personide_Admin {
 		$this->version = $version;
 		$this->logger = wc_get_logger();
 		$this->context = array( 'source' => 'personide' );
+
 		$this->new_products = array();
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
+		$this->logger->debug("Created admin class instance", $this->context);
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
 	}
 
 	/**
