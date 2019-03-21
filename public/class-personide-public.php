@@ -53,7 +53,18 @@ class Personide_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->logger = wc_get_logger();
+
+		if(!session_id()) {
+			session_start();
+		}
+
 		$this->events = [];
+
+		if(!empty($_SESSION[$plugin_name . '_events'])) {
+			$this->events = $_SESSION[$plugin_name . '_events'];
+		}
+
+		$_SESSION[$this->plugin_name . '_events'] = [];
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
 	}
@@ -145,8 +156,8 @@ class Personide_Public {
 	}
 
 
-	public function checkout($order_get_id) {
-		$order = new WC_Order($order_get_id);
+	public function checkout($order) {
+		// $order = new WC_Order($order_get_id);
 
 		$items = $order->get_items();
 
@@ -171,7 +182,9 @@ class Personide_Public {
 		);
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
-		array_push($this->events, $event_object);
+
+		$this->logger->debug("Adding purchase event to session");
+		array_push($_SESSION[$this->plugin_name . '_events'], $event_object);
 	}
 
 
@@ -182,18 +195,18 @@ class Personide_Public {
 
 	public function get_hotslot_html($strategy = NULL) {
 		$default = '
-			<h1 class="personide_hotslot-title center"></h1>
-			<div class="listing">
-			  <div class="template item personide-product">
-			    <a class="personide-product__link" href="">
-			      <img class="personide-product__picture" src=""/>
-			      <div class="personide-product__details">
-			        <p class="personide-product__name"></p>
-			        <p class="personide-product__price"></p>
-			      </div>
-			    </a>
-			  </div>
-			</div>
+		<h1 class="personide_hotslot-title center"></h1>
+		<div class="listing">
+		<div class="template item personide-product">
+		<a class="personide-product__link" href="">
+		<img class="personide-product__picture" src=""/>
+		<div class="personide-product__details">
+		<p class="personide-product__name"></p>
+		<p class="personide-product__price"></p>
+		</div>
+		</a>
+		</div>
+		</div>
 		';
 		
 		$template = Personide_Util::get_option('hotslot_template');

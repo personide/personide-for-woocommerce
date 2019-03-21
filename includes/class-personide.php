@@ -191,7 +191,7 @@ class Personide {
 		
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load', 1);
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
-		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 1);
+		$this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'checkout', 10, 1);
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
 
 		$placements = array(
@@ -227,7 +227,7 @@ class Personide {
 
 				add_action($hook, function() use ($type) {
 					$this->plugin_public->add_hotslot($type);
-				}, 0);
+				}, 1024);
 			}
 		}
 
