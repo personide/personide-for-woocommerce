@@ -131,7 +131,6 @@ class Personide_Public {
 		$items = array_values(array_map("itemsToProductIds", $items));
 
 		wc_enqueue_js("Personide.set('cartProductIds', ".json_encode($items).")");
-		wc_enqueue_js("console.log('".json_encode($items)."')");
 
 		// wc_enqueue_js("Personide.setKey('$access_token');");
 		// wc_enqueue_js("Personide.set('currentPage', '".$pagetype."')");

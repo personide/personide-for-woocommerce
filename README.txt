@@ -26,3 +26,8 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 Enhancement - Add recently viewed products on every page
 Enhancement - Add category page recommendations
 Enhancement - Add cart page recommendations
+
+= 1.1.1 =
+
+Fix - Support event caching in session, change purchase event hook to wc core
+Fix - Remove recently viewed defauly placement

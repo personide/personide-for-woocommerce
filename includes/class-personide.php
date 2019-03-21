@@ -208,7 +208,7 @@ class Personide {
 			
 			'recently_viewed' => array(
 				'hooks' => [
-					'get_footer'
+					// 'get_footer'
 				]
 			)
 		);
