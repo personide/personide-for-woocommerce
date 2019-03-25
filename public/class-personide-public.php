@@ -55,16 +55,14 @@ class Personide_Public {
 		$this->logger = wc_get_logger();
 		$this->context = array( 'source' => 'personide' );
 
-		if(!session_id()) {
-			session_start();
-		}
-
 		$this->events = [];
 
-		if(!empty($_SESSION[$plugin_name . '_events'])) {
-			$this->events = $_SESSION[$plugin_name . '_events'];
-		} else {
-			$_SESSION[$this->plugin_name . '_events'] = [];
+		if(WC()->session) {
+			if(!empty(WC()->session->get($plugin_name . '_events'))) {
+				$this->events = WC()->session->get($plugin_name . '_events');
+			} else {
+				WC()->session->set($plugin_name . '_events', array());
+			}
 		}
 
 		$this->logger->debug("Created public class instance", $this->context);
@@ -146,7 +144,7 @@ class Personide_Public {
 		foreach( $this->events as $event ) {
 			wc_enqueue_js( "Personide.dispatch($event)" );
 		}
-		$_SESSION[$this->plugin_name . '_events'] = [];
+		WC()->session->set($this->plugin_name . '_events', array());
 		$this->logger->debug("Completed execution: wp_footer handler", $this->context);		
 	}
 
@@ -191,7 +189,11 @@ class Personide_Public {
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
 
 		$this->logger->debug("Adding purchase event to session");
-		array_push($_SESSION[$this->plugin_name . '_events'], $event_object);
+		
+		$events = WC()->session->get($this->plugin_name . '_events');
+		array_push($events, $event_object);
+
+		WC()->session->set($this->plugin_name . '_events', $events);
 
 		$this->logger->debug("Completed execution: woocommerce_checkout_update_order_meta handler", $this->context);
 	}
