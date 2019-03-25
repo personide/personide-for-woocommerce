@@ -57,8 +57,8 @@ class Personide_Public {
 
 		$this->events = [];
 
-		if(WC()->session) {
-			if(!empty(WC()->session->get($plugin_name . '_events'))) {
+		if( WC()->session ) {
+			if( WC()->session->__isset($plugin_name . '_events') ) {
 				$this->events = WC()->session->get($plugin_name . '_events');
 			} else {
 				WC()->session->set($plugin_name . '_events', array());
@@ -144,7 +144,9 @@ class Personide_Public {
 		foreach( $this->events as $event ) {
 			wc_enqueue_js( "Personide.dispatch($event)" );
 		}
-		WC()->session->set($this->plugin_name . '_events', array());
+		// WC()->session->set($this->plugin_name . '_events', array());
+		WC()->session->__unset($this->plugin_name . '_events');
+
 		$this->logger->debug("Completed execution: wp_footer handler", $this->context);		
 	}
 

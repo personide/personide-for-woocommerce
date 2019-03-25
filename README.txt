@@ -40,3 +40,7 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 = 1.1.3 =
 
 - Fix - Use woocommerce sessions instead of php $_SESSION 
+
+= 1.1.4 =
+
+- Enhancement - Clear events session on enqueue
