@@ -36,3 +36,7 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 
 - Fix - Event session clearing fixed
 - Enhancement - Add low level debug logs to event hook handlers
+
+= 1.1.3 =
+
+- Fix - Use woocommerce sessions instead of php $_SESSION 
