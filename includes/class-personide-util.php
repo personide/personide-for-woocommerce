@@ -12,6 +12,8 @@ class Personide_Util {
 
 	public static function get_event($type, $entityType, $entityId, $properties = NULL, $targetEntityType = NULL, $targetEntityId = NULL) {
 		
+		$eventTime = current_time('c');
+
 		$template = "
 		{
 			event: '$type',
@@ -20,6 +22,7 @@ class Personide_Util {
 			" . ( ($targetEntityId !== NULL) ? "targetEntityId: '$targetEntityId'," : "" ) . "
 			" . ( ($targetEntityType !== NULL) ? "targetEntityType: '$targetEntityType'," : "" ) . "
 			" . ( ($properties !== NULL) ? "properties: $properties," : "" ) . "
+			eventTime: '$eventTime'
 		}
 		";
 
