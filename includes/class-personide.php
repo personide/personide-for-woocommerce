@@ -203,17 +203,17 @@ class Personide {
 			
 			'' => array(
 				'hooks' => [
-					'woocommerce_after_cart',
-					'woocommerce_before_shop_loop',
+					array('name' => 'woocommerce_after_cart', 'priority' => 0),
+					array('name' => 'woocommerce_before_shop_loop', 'priority' => 0),
 					// 'woocommerce_after_single_product',
-					'woocommerce_after_single_product_summary',
+					array('name' => 'woocommerce_after_single_product_summary', 'priority' => 0)
 					// 'woocommerce_before_checkout_form',
 				]
 			),
 			
 			'recently_viewed' => array(
 				'hooks' => [
-					// 'get_footer'
+					// array('name' => 'get_footer', 'priority' => PHP_INT_MAX)
 				]
 			)
 		);
@@ -225,14 +225,9 @@ class Personide {
 			// @todo: filter hooks by enabled from settings 
 			foreach($hooks as $hook) {
 
-				// $this->loader->add_action( $hook, NULL, function() {
-				// 	global $type;
-				// 	$plugin_public->add_hotslot($type);
-				// }, 1);
-
-				add_action($hook, function() use ($type) {
+				add_action($hook['name'], function() use ($type) {
 					$this->plugin_public->add_hotslot($type);
-				}, 1024);
+				}, $hook['priority']);
 			}
 		}
 

@@ -117,7 +117,14 @@ class Personide_Public {
 		}
 
 		if( is_product_category() ) {
-			wc_enqueue_js("Personide.set('categoryName', '". ($pagedata['properties']["name"]) ."')");
+			$properties = $pagedata['properties'];
+			$value = $properties['name'];
+			if( !empty($properties['ancestors']) ) {
+				array_unshift( $properties['ancestors'], $value );
+				$value = $properties['ancestors'];
+			}
+
+			wc_enqueue_js("Personide.set('categoryName', '". ((is_array($value)) ? json_encode($value) : $value) ."')");
 		}
 
 		array_push($this->events, $pagedata['event']);
@@ -159,7 +166,6 @@ class Personide_Public {
 		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', '', NULL, 'item', $product->get_id() );
 		array_push($this->events, $event_object);
 		$this->logger->debug("Completed execution: woocommerce_add_to_cart handler", $this->context);
-
 	}
 
 
@@ -222,14 +228,16 @@ class Personide_Public {
 		</div>
 		';
 		
+		$default_theme = Personide_Util::get_option('default_theme');
 		$template = Personide_Util::get_option('hotslot_template');
 		
 		if(strlen($template) == 0) {
 			$template = $default;
 		}
+		$default_class = ($default_theme) ? 'personide-basic' : '';
 		
 		return '
-		<div class="personide_container" data-priority=1 data-container="hotslot" data-type="'.$strategy.'">
+		<div class="personide_container '.$default_class.'" data-priority=1 data-container="hotslot" data-type="'.$strategy.'">
 		'.$template.'
 		</div>
 		';

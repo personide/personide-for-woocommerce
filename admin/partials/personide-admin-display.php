@@ -22,11 +22,11 @@
     <form method="post" name="access_token" action="options.php">
 
       <?php
+      
       $logger = wc_get_logger();
-
       $options = get_option($this->plugin_name);
 
-      $keys = ['access_token', 'remove_wc_related_products', 'hotslot_template'];
+      $keys = ['access_token', 'remove_wc_related_products', 'default_theme', 'hotslot_template'];
       foreach ($keys as $key) {
         $options[$key] = (isset($options[$key]) && !empty($options[$key])) ? $options[$key] : '';
       }
@@ -54,6 +54,14 @@
             <td>
               <input type="checkbox"
               id="<?php echo $this->plugin_name ?>-remove_wc_related_products" name="<?php echo $this->plugin_name ?>[remove_wc_related_products]" <?php echo ($options['remove_wc_related_products']) ? 'checked' : '' ?> />
+            </td>
+          </tr>
+
+          <tr valign="top">
+            <th class="row"><?php esc_attr_e('Enable Default Theme', $this->plugin_name); ?></th>
+            <td>
+              <input type="checkbox"
+              id="<?php echo $this->plugin_name ?>-default_theme" name="<?php echo $this->plugin_name ?>[default_theme]" <?php echo ($options['default_theme']) ? 'checked' : '' ?> />
             </td>
           </tr>
 

@@ -56,6 +56,11 @@ class Personide_Admin {
 
 		$this->new_products = array();
 
+		$this->default_options = array(
+			'remove_wc_related_products' => TRUE,
+			'default_theme' => TRUE
+		);
+
 		$this->logger->debug("Created admin class instance", $this->context);
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-util.php';
@@ -104,7 +109,7 @@ class Personide_Admin {
 		 */
 
 		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . '../public/js/personide-public.js', array( 'jquery' ), $this->version, false );
-		$access_token = Personide_Util::get_option('access_token');
+		$access_token = get_option('access_token');
 		wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js?id=".$access_token, array( 'jquery' ), null, false );
 		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
 		wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
@@ -207,18 +212,22 @@ class Personide_Admin {
 
 	public function validate_all($input) {
 
-		$keys = ['access_token', 'remove_wc_related_products', 'hotslot_template'];
+		$keys = ['access_token', 'remove_wc_related_products', 'default_theme', 'hotslot_template'];
 		foreach ($keys as $key) {
 			$input[$key] = (isset($input[$key]) && !empty($input[$key])) ? $input[$key] : '';
 		}
 
 		$input['remove_wc_related_products'] = ($input['remove_wc_related_products']) ? TRUE : FALSE;
+		$input['default_theme'] = ($input['default_theme']) ? TRUE : FALSE;
 
 		return $input;
 	}
 
 
 	public function options_update() {
-		register_setting($this->plugin_name, $this->plugin_name, array($this, 'validate_all'));
+		register_setting($this->plugin_name, $this->plugin_name, array(
+			'santizie_callback' => array($this, 'validate_all'),
+			'default' => $this->default_options
+		));
 	}
 }

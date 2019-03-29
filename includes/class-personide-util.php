@@ -30,9 +30,21 @@ class Personide_Util {
 	}
 
 	public static function get_option($key) {
+
 		try {
 			$options = get_option('personide');
 			return (isset($options[$key]) && !empty($options[$key])) ? $options[$key] : NULL;	
+
+			// if ( isset($options[$key]) && !empty($options[$key]) ) {
+			// 	$value = $options[$key];
+			
+			// } elseif ( isset($defaults[$key]) ) {
+			// 	$value = $defaults[$key];
+			
+			// } else {
+			// 	$value = NULL;
+			// }
+
 		} catch(Exception $e) {
 			$logger = wc_get_logger();
 			$logger->debug(print_r($e, TRUE));
@@ -67,9 +79,19 @@ class Personide_Util {
 		} elseif ( is_product_category() ) {
 			$type = 'category';
 			$id = $query_object->term_id;
+
 			$properties = array(
-				'name' => $query_object->name
+				'name' => $query_object->name,
 			);
+
+			if( 0 != $query_object->parent ) {
+				$hierarchy = get_ancestors( $id, $query_object->taxonomy );
+				$names = array_map(function($term_id) {
+					return get_term($term_id)->name;
+				}, $hierarchy);
+
+				$properties['ancestors'] = $names;
+			}
 
 		} elseif ( is_product_tag() ) {
 			$type = 'tag';
