@@ -124,7 +124,7 @@ class Personide_Public {
 				$value = $properties['ancestors'];
 			}
 
-			wc_enqueue_js("Personide.set('categoryName', '". ((is_array($value)) ? json_encode($value) : $value) ."')");
+			wc_enqueue_js("Personide.set('categoryName', ". ((is_array($value)) ? json_encode($value) : "'".$value."'") .")");
 		}
 
 		array_push($this->events, $pagedata['event']);
