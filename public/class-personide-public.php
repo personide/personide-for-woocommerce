@@ -164,7 +164,12 @@ class Personide_Public {
 		$name = $product->get_title();
 
 		$event_object = Personide_Util::get_event( 'add-to-cart', 'user', '', NULL, 'item', $product->get_id() );
+
+		$events = WC()->session->get($this->plugin_name . '_events');
+		array_push($events, $event_object);
+		WC()->session->set($this->plugin_name . '_events', $events);
 		array_push($this->events, $event_object);
+
 		$this->logger->debug("Completed execution: woocommerce_add_to_cart handler", $this->context);
 	}
 
@@ -200,7 +205,6 @@ class Personide_Public {
 		
 		$events = WC()->session->get($this->plugin_name . '_events');
 		array_push($events, $event_object);
-
 		WC()->session->set($this->plugin_name . '_events', $events);
 
 		$this->logger->debug("Completed execution: woocommerce_checkout_update_order_meta handler", $this->context);
