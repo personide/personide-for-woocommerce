@@ -44,3 +44,8 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 = 1.1.4 =
 
 - Enhancement - Clear events session on enqueue
+
+= 1.1.5 =
+
+- Enhancement - Add category hierarchy support for category recommendations
+- Fix - Handle add to cart events via hooks over javascript
