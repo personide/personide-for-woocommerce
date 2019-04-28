@@ -58,7 +58,6 @@ class Personide_Admin {
 
 		$this->default_options = array(
 			'remove_wc_related_products' => TRUE,
-			'default_theme' => TRUE
 		);
 
 		$this->logger->debug("Created admin class instance", $this->context);
@@ -212,13 +211,12 @@ class Personide_Admin {
 
 	public function validate_all($input) {
 
-		$keys = ['access_token', 'remove_wc_related_products', 'default_theme', 'hotslot_template'];
+		$keys = ['access_token', 'remove_wc_related_products'];
 		foreach ($keys as $key) {
 			$input[$key] = (isset($input[$key]) && !empty($input[$key])) ? $input[$key] : '';
 		}
 
 		$input['remove_wc_related_products'] = ($input['remove_wc_related_products']) ? TRUE : FALSE;
-		$input['default_theme'] = ($input['default_theme']) ? TRUE : FALSE;
 
 		return $input;
 	}
@@ -226,7 +224,7 @@ class Personide_Admin {
 
 	public function options_update() {
 		register_setting($this->plugin_name, $this->plugin_name, array(
-			'santizie_callback' => array($this, 'validate_all'),
+			'sanitize_callback' => array($this, 'validate_all'),
 			'default' => $this->default_options
 		));
 	}

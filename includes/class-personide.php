@@ -159,11 +159,9 @@ class Personide {
 
 		$plugin_admin = new Personide_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
-
 		// $this->loader->add_action('admin_init', $plugin_admin, 'lib_init', 1);
 
 		// Product $set
@@ -198,38 +196,6 @@ class Personide {
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
 		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'checkout', 10, 2);
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
-
-		$placements = array(
-			
-			'' => array(
-				'hooks' => [
-					array('name' => 'woocommerce_after_cart', 'priority' => 0),
-					array('name' => 'woocommerce_before_shop_loop', 'priority' => 0),
-					// 'woocommerce_after_single_product',
-					array('name' => 'woocommerce_after_single_product_summary', 'priority' => 0)
-					// 'woocommerce_before_checkout_form',
-				]
-			),
-			
-			'recently_viewed' => array(
-				'hooks' => [
-					// array('name' => 'get_footer', 'priority' => PHP_INT_MAX)
-				]
-			)
-		);
-
-		foreach ((array)$placements as $type => $placement) {
-
-			$hooks = $placement['hooks'];
-
-			// @todo: filter hooks by enabled from settings 
-			foreach($hooks as $hook) {
-
-				add_action($hook['name'], function() use ($type) {
-					$this->plugin_public->add_hotslot($type);
-				}, $hook['priority']);
-			}
-		}
 
 		add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
 	}

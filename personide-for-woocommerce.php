@@ -7,7 +7,7 @@
  * admin area. This file also includes all of the dependencies used by the plugin,
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
- *
+ * 
  * @link              http://www.quanrio.com
  * @since             1.1.0
  * @package           Personide
@@ -16,7 +16,7 @@
  * Plugin Name:       Personide for WooCommerce
  * Plugin URI:        http://www.personide.com
  * Description:       Integrate Personide and personalize your customers' experience
- * Version:           1.1.5
+ * Version:           1.1.6
  * Author:            Personide
  * Author URI:        http://www.personide.com
  * License:           GPL-2.0+
@@ -37,13 +37,13 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  */
-define( 'PERSONIDE_VERSION', '1.1.5' );
+define( 'PERSONIDE_VERSION', '1.1.6' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-update-checker/plugin-update-checker.php';
 $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
   'http://18.136.134.232/woocommerce/?action=get_metadata&slug=personide-for-woocommerce',
   __FILE__,
-  'personide-for-woocommerce' 
+  'personide-for-woocommerce'
 );
 
 /**

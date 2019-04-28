@@ -49,3 +49,8 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 
 - Enhancement - Add category hierarchy support for category recommendations
 - Fix - Handle add to cart events via hooks over javascript
+
+= 1.1.6 =
+
+- Enhancement - Remove hotslot template and default theme settings
+- Enhancement - Remove hooks dependent hotslots
