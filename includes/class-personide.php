@@ -178,6 +178,8 @@ class Personide {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		
+		$this->loader->add_filter('script_loader_tag', $plugin_public, 'add_async_attribute', 10, 2);
+		
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load', 1);
 		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
 		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'checkout', 10, 2);

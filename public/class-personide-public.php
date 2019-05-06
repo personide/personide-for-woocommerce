@@ -94,6 +94,12 @@ class Personide_Public {
 
 	}
 
+	public function add_async_attribute($tag, $handle) {
+		if ( $this->plugin_name !== $handle )
+			return $tag;
+		return str_replace( ' src', ' async src', $tag );
+	}
+
 	public function page_load() {
 
 		$options = get_option($this->plugin_name);
