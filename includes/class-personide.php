@@ -185,7 +185,7 @@ class Personide {
 		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'checkout', 10, 2);
 		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
 
-		add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
+		// add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
 	}
 
 	/**
