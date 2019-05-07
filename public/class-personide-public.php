@@ -164,10 +164,10 @@ class Personide_Public {
 	public function all_loaded() {
 		WC()->session->__unset($this->plugin_name . '_events');
 
-		$this->enqueue_js( "window.personide_events = $events" );
+		$this->enqueue_js( "window.personide_events = $this->events;" );
 		wc_enqueue_js($this->script);
 		echo $this->params_html;
-		
+
 		$this->logger->debug("Completed execution: wp_footer handler", $this->context);		
 	}
 
