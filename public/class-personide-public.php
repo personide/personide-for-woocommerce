@@ -164,7 +164,7 @@ class Personide_Public {
 	public function all_loaded() {
 		WC()->session->__unset($this->plugin_name . '_events');
 
-		$this->enqueue_js( "window.personide_events = $this->events;" );
+		$this->enqueue_js( "window.personide_events = ".json_encode($this->events).";" );
 		wc_enqueue_js($this->script);
 		echo $this->params_html;
 
