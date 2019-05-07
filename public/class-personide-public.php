@@ -96,7 +96,7 @@ class Personide_Public {
 	}
 
 	public function enqueue_js($code) {
-		$this->script .= '\n'.$code;
+		$this->script .= "\n".$code;
 	}
 
 	public function add_async_attribute($tag, $handle) {
