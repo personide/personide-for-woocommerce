@@ -5,7 +5,6 @@ class Personide_Util {
 
 	public static function get_var_script() {
 		return "
-		Personide.setKey('". Personide_Util::get_option('access_token') ."')
 		Personide.set('currentPage', '". Personide_Util::get_pagedata('type') ."')
 		";
 	}
