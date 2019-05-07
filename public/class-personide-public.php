@@ -90,7 +90,6 @@ class Personide_Public {
 		$wpes = wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js/".$access_token, array( 'jquery' ), null, false );
 		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js/".$access_token, array( 'jquery' ), null, false );
 		$this->enqueue_js( Personide_Util::get_var_script() );
-		$wais = wp_add_inline_script( $this->plugin_name, Personide_Util::get_var_script() );
 		$this->logger->debug("Enqueued public scripts", $this->context);
 
 	}
