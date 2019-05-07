@@ -34,16 +34,6 @@ class Personide_Util {
 			$options = get_option('personide');
 			return (isset($options[$key]) && !empty($options[$key])) ? $options[$key] : NULL;	
 
-			// if ( isset($options[$key]) && !empty($options[$key]) ) {
-			// 	$value = $options[$key];
-			
-			// } elseif ( isset($defaults[$key]) ) {
-			// 	$value = $defaults[$key];
-			
-			// } else {
-			// 	$value = NULL;
-			// }
-
 		} catch(Exception $e) {
 			$logger = wc_get_logger();
 			$logger->debug(print_r($e, TRUE));

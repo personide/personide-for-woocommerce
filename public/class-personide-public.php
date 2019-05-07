@@ -55,6 +55,7 @@ class Personide_Public {
 		$this->logger = wc_get_logger();
 		$this->context = array( 'source' => 'personide' );
 		$this->script = "";
+		$this->params_html = "";
 		$this->events = [];
 
 		if( WC()->session ) {
@@ -89,13 +90,18 @@ class Personide_Public {
 		$access_token = Personide_Util::get_option('access_token');
 		$wpes = wp_enqueue_script( $this->plugin_name, "//connect.personide.com/lib/js/".$access_token, array( 'jquery' ), null, false );
 		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js/".$access_token, array( 'jquery' ), null, false );
-		$this->enqueue_js( Personide_Util::get_var_script() );
+		// $this->enqueue_js( Personide_Util::get_var_script() );
+		$this->enqueue_params("page", Personide_Util::get_pagedata('type'));
 		$this->logger->debug("Enqueued public scripts", $this->context);
 
 	}
 
 	public function enqueue_js($code) {
 		$this->script .= "\n".$code;
+	}
+
+	public function enqueue_params($key, $value) {
+		$this->params_html .= "\n"."<div class=\"personide_$key\" style=\"display: none\">$value</div>";
 	}
 
 	public function add_async_attribute($tag, $handle) {
@@ -120,7 +126,8 @@ class Personide_Public {
 			$product = wc_get_product( $post->ID );
  			// @todo skip following if product is in cart
 			$name = $product->get_title();
-			$this->enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
+			// $this->enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
+			$this->enqueue_params("product_id", $product->get_id());
 		}
 
 		if( is_product_category() ) {
@@ -131,7 +138,8 @@ class Personide_Public {
 				$value = $properties['ancestors'];
 			}
 
-			$this->enqueue_js("Personide.set('categoryName', ". ((is_array($value)) ? json_encode($value) : "'".$value."'") .")");
+			// $this->enqueue_js("Personide.set('categoryName', ". ((is_array($value)) ? json_encode($value) : "'".$value."'") .")");
+			$this->enqueue_params("category_name", ((is_array($value)) ? json_encode($value) : "'".$value."'"));
 		}
 
 		array_push($this->events, $pagedata['event']);
@@ -144,20 +152,22 @@ class Personide_Public {
 
 		$items = array_values(array_map("itemsToProductIds", $items));
 
-		$this->enqueue_js("Personide.set('cartProductIds', ".json_encode($items).")");
-		$this->enqueue_js("Personide.set('pluginDirectory', '".plugin_dir_url( __FILE__ )."')");
+		// $this->enqueue_js("Personide.set('cartProductIds', ".json_encode($items).")");
+		// $this->enqueue_js("Personide.set('pluginDirectory', '".plugin_dir_url( __FILE__ )."')");
+
+		$this->enqueue_params('cart', json_encode($items));
+		$this->enqueue_params('plugin_directory', plugin_dir_url( __FILE__ ));
 
 		$this->logger->debug("Completed execution: template_redirect handler", $this->context);
 	}
 
 	public function all_loaded() {
-		foreach( $this->events as $event ) {
-			$this->enqueue_js( "Personide.dispatch($event)" );
-		}
 		WC()->session->__unset($this->plugin_name . '_events');
 
-		wc_enqueue_js("$(document).ready(function() { \n".$this->script."\n })");
-
+		$this->enqueue_js( "window.personide_events = $events" );
+		wc_enqueue_js($this->script);
+		echo $this->params_html;
+		
 		$this->logger->debug("Completed execution: wp_footer handler", $this->context);		
 	}
 
