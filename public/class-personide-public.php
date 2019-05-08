@@ -139,7 +139,7 @@ class Personide_Public {
 			}
 
 			// $this->enqueue_js("Personide.set('categoryName', ". ((is_array($value)) ? json_encode($value) : "'".$value."'") .")");
-			$this->enqueue_params("category_name", ((is_array($value)) ? json_encode($value) : "'".$value."'"));
+			$this->enqueue_params("category_name", ((is_array($value)) ? json_encode($value) : $value));
 		}
 
 		array_push($this->events, $pagedata['event']);
