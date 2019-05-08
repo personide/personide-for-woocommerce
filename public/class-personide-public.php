@@ -166,7 +166,7 @@ class Personide_Public {
 		WC()->session->__unset($this->plugin_name . '_events');
 
 		$array = "[";
-		$array .= implode(', ', $array);
+		$array .= implode(', ', $this->events);
 		$array .= "]";
 
 		$this->enqueue_js( "window.personide_events = ".$array.";" );
