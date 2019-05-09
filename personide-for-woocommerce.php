@@ -16,7 +16,7 @@
  * Plugin Name:       Personide for WooCommerce
  * Plugin URI:        http://www.personide.com
  * Description:       Integrate Personide and personalize your customers' experience
- * Version:           1.1.6
+ * Version:           1.2.0
  * Author:            Personide
  * Author URI:        http://www.personide.com
  * License:           GPL-2.0+
@@ -24,9 +24,9 @@
  * Text Domain:       personide
  * Domain Path:       /languages
  * Requires at least: 4.9.0
- * Tested up to:      4.9.6
+ * Tested up to:      5.1.1
  * WC requires at least:  3.4.0
- * WC tested up to:  3.4.2
+ * WC tested up to:  3.5.7
  */
 
 // If this file is called directly, abort.

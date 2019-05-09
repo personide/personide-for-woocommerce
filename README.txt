@@ -54,3 +54,8 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 
 - Enhancement - Remove hotslot template and default theme settings
 - Enhancement - Remove hooks dependent hotslots
+
+= 1.2.0 =
+
+- Enhancement - Replace javascript enqueue with personide_ html tags
+- Enhancement - Make Personide Connect library loading async 
