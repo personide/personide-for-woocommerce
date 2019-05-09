@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  */
-define( 'PERSONIDE_VERSION', '1.1.6' );
+define( 'PERSONIDE_VERSION', '1.2.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/plugin-update-checker/plugin-update-checker.php';
 $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
