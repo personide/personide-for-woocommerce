@@ -59,3 +59,7 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 
 - Enhancement - Replace javascript enqueue with personide_ html tags
 - Enhancement - Make Personide Connect library loading async 
+
+= 1.2.1 =
+
+- Fix - Replace events enqueue function with raw script
