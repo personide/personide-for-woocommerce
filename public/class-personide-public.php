@@ -170,7 +170,8 @@ class Personide_Public {
 		$array .= "]";
 
 		$this->enqueue_js( "window.personide_events = ".$array.";" );
-		wp_add_inline_script($this->plugin_name, $this->script);
+		// wp_add_inline_script($this->plugin_name, $this->script);
+		echo '<script type="text/javascript">'.$this->script.'</script>';
 		echo $this->params_html;
 
 		$this->logger->debug("Completed execution: wp_footer handler", $this->context);		
