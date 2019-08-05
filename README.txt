@@ -63,3 +63,8 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 = 1.2.1 =
 
 - Fix - Replace events enqueue function with raw script
+
+= 1.2.2 =
+
+- Enhancement - Enqueue logged in user details personide tags
+- Fix - Correct purchase event product id and variation id

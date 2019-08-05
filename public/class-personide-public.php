@@ -121,6 +121,13 @@ class Personide_Public {
 			remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
 		}
 
+		if( is_user_logged_in() ) {
+			$current_user = wp_get_current_user();
+			$this->enqueue_params('user_email', $current_user->user_email);
+			$this->enqueue_params('user_firstname', $current_user->user_firstname);
+			$this->enqueue_params('user_lastname', $current_user->user_lastname);
+		}
+
 		if ( is_product() ) {
 			global $post;
 			$product = wc_get_product( $post->ID );
@@ -174,7 +181,7 @@ class Personide_Public {
 		echo '<script type="text/javascript">'.$this->script.'</script>';
 		echo $this->params_html;
 
-		$this->logger->debug("Completed execution: wp_footer handler", $this->context);		
+		$this->logger->debug("Completed execution: wp_footer handler", $this->context);
 	}
 
 
@@ -195,17 +202,20 @@ class Personide_Public {
 
 
 	public function checkout($order_id, $data) {
-		
+
 		$order = wc_get_order($order_id);
-		$items = $order->get_items();
+		$items = $order->get_items(); // WC_Order_Item[]
 
 		function itemsToProducts($item) {
 			$product = $item->get_product();
+			$order_item_product = new WC_Order_Item_Product($item->get_id());
 			return Array(
-				'id' => strval($product->get_id()),
-				'variation_id' => $item->get_variation_id(),
-				'price' => 	$product->get_price(),
-				'quantity' => $item->get_quantity(),
+				'id' => strval($order_item_product->get_product_id()),
+				'variation_id' => strval($order_item_product->get_variation_id()),
+				'price' => $product->get_price(),
+				'quantity' => $order_item_product->get_quantity(),
+				'subtotal' => $order_item_product->get_subtotal(),
+				'total' => $order_item_product->get_total(),
 				'categories' => array_map(function($id) {
 					return get_term_by( 'id', $id, 'product_cat' )->slug;
 				}, $product->get_category_ids())
@@ -222,7 +232,7 @@ class Personide_Public {
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
 
 		$this->logger->debug("Adding purchase event to session");
-		
+
 		$events = WC()->session->get($this->plugin_name . '_events');
 		array_push($events, $event_object);
 		WC()->session->set($this->plugin_name . '_events', $events);
@@ -251,15 +261,15 @@ class Personide_Public {
 		</div>
 		</div>
 		';
-		
+
 		$default_theme = Personide_Util::get_option('default_theme');
 		$template = Personide_Util::get_option('hotslot_template');
-		
+
 		if(strlen($template) == 0) {
 			$template = $default;
 		}
 		$default_class = ($default_theme) ? 'personide-basic' : '';
-		
+
 		return '
 		<div class="personide_container '.$default_class.'" data-priority=1 data-container="hotslot" data-type="'.$strategy.'">
 		'.$template.'
