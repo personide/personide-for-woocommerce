@@ -226,11 +226,13 @@ class Personide_Public {
 
 		$event_object = Personide_Util::get_event( 'purchase', 'user', '', json_encode($properties), 'cart', $order->get_id() );
 
-		$this->logger->debug("Adding purchase event to session");
+		// $this->logger->debug("Adding purchase event to session");
 
-		$events = WC()->session->get($this->plugin_name . '_events');
+		// $events = WC()->session->get($this->plugin_name . '_events');
 		array_push($events, $event_object);
-		WC()->session->set($this->plugin_name . '_events', $events);
+		// WC()->session->set($this->plugin_name . '_events', $events);
+
+
 
 		$this->logger->debug("Completed execution: woocommerce_checkout_update_order_meta handler", $this->context);
 	}
