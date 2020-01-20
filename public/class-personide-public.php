@@ -229,7 +229,7 @@ class Personide_Public {
 		// $this->logger->debug("Adding purchase event to session");
 
 		// $events = WC()->session->get($this->plugin_name . '_events');
-		array_push($events, $event_object);
+		array_push($this->$events, $event_object);
 		// WC()->session->set($this->plugin_name . '_events', $events);
 
 
