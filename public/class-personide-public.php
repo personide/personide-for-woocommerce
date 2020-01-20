@@ -133,7 +133,6 @@ class Personide_Public {
 			$product = wc_get_product( $post->ID );
  			// @todo skip following if product is in cart
 			$name = $product->get_title();
-			// $this->enqueue_js("Personide.set('currentProductId', '".$product->get_id()."')");
 			$this->enqueue_params("product_id", $product->get_id());
 		}
 
