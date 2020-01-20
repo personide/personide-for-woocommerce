@@ -145,7 +145,6 @@ class Personide_Public {
 				$value = $properties['ancestors'];
 			}
 
-			// $this->enqueue_js("Personide.set('categoryName', ". ((is_array($value)) ? json_encode($value) : "'".$value."'") .")");
 			$this->enqueue_params("category_name", ((is_array($value)) ? json_encode($value) : $value));
 		}
 
@@ -158,9 +157,6 @@ class Personide_Public {
 		}
 
 		$items = array_values(array_map("itemsToProductIds", $items));
-
-		// $this->enqueue_js("Personide.set('cartProductIds', ".json_encode($items).")");
-		// $this->enqueue_js("Personide.set('pluginDirectory', '".plugin_dir_url( __FILE__ )."')");
 
 		$this->enqueue_params('cart', json_encode($items));
 		$this->enqueue_params('plugin_directory', plugin_dir_url( __FILE__ ));
