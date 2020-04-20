@@ -68,3 +68,7 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 
 - Enhancement - Enqueue logged in user details personide tags
 - Fix - Correct purchase event product id and variation id
+
+= 1.2.3 =
+
+- Fix - Remove session dependency for purchase event in favor of previously used woocommerce_thankyou hook 
