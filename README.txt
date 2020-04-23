@@ -72,3 +72,7 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 = 1.2.3 =
 
 - Fix - Remove session dependency for purchase event in favor of previously used woocommerce_thankyou hook 
+
+= 1.2.4 =
+
+- Fix - Remove woocommerce_thankyou dependency in favor of order-received query var
