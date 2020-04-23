@@ -27,7 +27,8 @@
  * @subpackage Personide/includes
  * @author     Quanrio <contact@quanrio.com>
  */
-class Personide {
+class Personide
+{
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -66,8 +67,9 @@ class Personide {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
-		if ( defined( 'PERSONIDE_VERSION' ) ) {
+	public function __construct()
+	{
+		if (defined('PERSONIDE_VERSION')) {
 			$this->version = PERSONIDE_VERSION;
 		} else {
 			$this->version = '1.0.0';
@@ -76,7 +78,7 @@ class Personide {
 		$this->plugin_public = NULL;
 
 		$this->logger = wc_get_logger();
-		$this->context = array( 'source' => 'personide' );
+		$this->context = array('source' => 'personide');
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -102,33 +104,33 @@ class Personide {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies()
+	{
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-loader.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-personide-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-personide-i18n.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-personide-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-personide-admin.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-personide-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-personide-public.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-personide-public.php';
 
 		$this->loader = new Personide_Loader();
-
 	}
 
 	/**
@@ -140,12 +142,12 @@ class Personide {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale() {
+	private function set_locale()
+	{
 
 		$plugin_i18n = new Personide_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
+		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	/**
@@ -155,11 +157,12 @@ class Personide {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_admin_hooks()
+	{
 
-		$plugin_admin = new Personide_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Personide_Admin($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
+		$this->loader->add_action('admin_menu', $plugin_admin, 'add_menu');
 		$this->loader->add_action('admin_init', $plugin_admin, 'options_update');
 	}
 
@@ -170,21 +173,22 @@ class Personide {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
+	private function define_public_hooks()
+	{
 
-		$plugin_public = new Personide_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Personide_Public($this->get_plugin_name(), $this->get_version());
 		$this->plugin_public = $plugin_public;
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		
+		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+
 		$this->loader->add_filter('script_loader_tag', $plugin_public, 'add_async_attribute', 10, 2);
-		
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'page_load', 1);
-		$this->loader->add_action( 'woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
+
+		$this->loader->add_action('template_redirect', $plugin_public, 'page_load', 1);
+		$this->loader->add_action('woocommerce_add_to_cart', $plugin_public, 'add_to_cart', 10, 3);
 		// $this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'checkout', 10, 2);
-		$this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'checkout', 10, 2);
-		$this->loader->add_action( 'wp_footer', $plugin_public, 'all_loaded', 1);
+		$this->loader->add_action('template_redirect', $plugin_public, 'checkout', 10, 2);
+		$this->loader->add_action('wp_footer', $plugin_public, 'all_loaded', 1);
 
 		// add_shortcode('personide-hotslot', array($plugin_public, 'hotslot_shortcode'));
 	}
@@ -194,7 +198,8 @@ class Personide {
 	 *
 	 * @since    1.0.0
 	 */
-	public function run() {
+	public function run()
+	{
 		$this->loader->run();
 	}
 
@@ -205,7 +210,8 @@ class Personide {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_plugin_name() {
+	public function get_plugin_name()
+	{
 		return $this->plugin_name;
 	}
 
@@ -215,7 +221,8 @@ class Personide {
 	 * @since     1.0.0
 	 * @return    Personide_Loader    Orchestrates the hooks of the plugin.
 	 */
-	public function get_loader() {
+	public function get_loader()
+	{
 		return $this->loader;
 	}
 
@@ -225,8 +232,8 @@ class Personide {
 	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
 	 */
-	public function get_version() {
+	public function get_version()
+	{
 		return $this->version;
 	}
-
 }
