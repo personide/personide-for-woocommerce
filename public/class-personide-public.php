@@ -130,12 +130,21 @@ class Personide_Public
 
 		if (is_user_logged_in()) {
 			$current_user = wp_get_current_user();
-			$this->enqueue_params('user_email', $current_user->user_email);
-			$this->enqueue_params('user_firstname', $current_user->user_firstname);
-			$this->enqueue_params('user_lastname', $current_user->user_lastname);
-			$this->logger->debug($current_user->ID, $this->context);
 			$customer = new WC_Customer($current_user->ID);
-			$this->logger->debug(print_r($customer), $this->context);
+			$properties = array(
+				'email' => $customer->get_email(),
+				'firstName' => $customer->get_first_name(),
+				'lastName' => $customer->get_last_name(),
+				'addressLine1' => $customer->get_billing_address_1(),
+				'addressLine2' => $customer->get_billing_address_2(),
+				'city' => $customer->get_billing_city(),
+				'state' => $customer->get_billing_state(),
+				'country' => $customer->get_billing_country()
+			);
+			$event_object = Personide_Util::get_event('$set', 'user', '', json_encode($properties));
+			array_push($this->events, $event_object);
+
+			$this->logger->debug(print_r($event_object), $this->context);
 		}
 
 		if (is_product()) {
