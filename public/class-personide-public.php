@@ -133,6 +133,9 @@ class Personide_Public
 			$this->enqueue_params('user_email', $current_user->user_email);
 			$this->enqueue_params('user_firstname', $current_user->user_firstname);
 			$this->enqueue_params('user_lastname', $current_user->user_lastname);
+			$this->logger->debug($current_user->ID, $this->context);
+			$customer = new WC_Customer($current_user->ID);
+			$this->logger->debug(print_r($customer), $this->context);
 		}
 
 		if (is_product()) {
