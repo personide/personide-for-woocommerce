@@ -143,8 +143,6 @@ class Personide_Public
 			);
 			$event_object = Personide_Util::get_event('$set', 'user', '', json_encode($properties));
 			array_push($this->events, $event_object);
-
-			$this->logger->debug(print_r($event_object), $this->context);
 		}
 
 		if (is_product()) {
