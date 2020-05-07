@@ -217,7 +217,7 @@ class Personide_Public
 		}
 
 		if (!isset($wp->query_vars['order-received'])) {
-			$this->logger->error("Checkout: query_vars['order-received'] is not set on checkout page... aborting.");
+			$this->logger->error("Checkout: query_vars['order-received'] is not set on checkout page... aborting.", $this->context);
 			return;
 		}
 
@@ -228,12 +228,12 @@ class Personide_Public
 			return;
 		}
 
-		$this->logger->debug("Checkout: query_vars['order-received'] = $order_id");
+		$this->logger->debug("Checkout: query_vars['order-received'] = $order_id", $this->context);
 
 		$order = wc_get_order($order_id);
 
 		if (is_bool($order)) {
-			$this->logger->error("Checkout: order was not found by id = $order_id ... aborting.");
+			$this->logger->error("Checkout: order was not found by id = $order_id ... aborting.", $this->context);
 			return;
 		}
 
