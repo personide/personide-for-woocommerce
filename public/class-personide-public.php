@@ -125,22 +125,8 @@ class Personide_Public
 			remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
 		}
 
-		if (is_user_logged_in() && (is_front_page() || is_checkout())) {
-			$current_user = wp_get_current_user();
-			$customer = new WC_Customer($current_user->ID);
-			$properties = array(
-				'nativeId' => $customer->get_id(),
-				'email' => $customer->get_email(),
-				'firstName' => $customer->get_first_name(),
-				'lastName' => $customer->get_last_name(),
-				'addressLine1' => $customer->get_billing_address_1(),
-				'addressLine2' => $customer->get_billing_address_2(),
-				'city' => $customer->get_billing_city(),
-				'state' => $customer->get_billing_state(),
-				'country' => $customer->get_billing_country()
-			);
-			$event_object = Personide_Util::get_event('$set', 'user', '', json_encode($properties));
-			array_push($this->events, $event_object);
+		if (is_front_page() || is_checkout()) {
+			// $this->push_user_set_event();
 		}
 
 		if (is_product()) {
@@ -190,6 +176,27 @@ class Personide_Public
 		// wp_add_inline_script($this->plugin_name, $this->script);
 		echo '<script type="text/javascript">' . $this->script . '</script>';
 		echo $this->params_html;
+	}
+
+	public function push_user_set_event()
+	{
+		if (is_user_logged_in()) {
+			$current_user = wp_get_current_user();
+			$customer = new WC_Customer($current_user->ID);
+			$properties = array(
+				'nativeId' => $customer->get_id(),
+				'email' => $customer->get_email(),
+				'firstName' => $customer->get_first_name(),
+				'lastName' => $customer->get_last_name(),
+				'addressLine1' => $customer->get_billing_address_1(),
+				'addressLine2' => $customer->get_billing_address_2(),
+				'city' => $customer->get_billing_city(),
+				'state' => $customer->get_billing_state(),
+				'country' => $customer->get_billing_country()
+			);
+			$event_object = Personide_Util::get_event('$set', 'user', '', json_encode($properties));
+			array_push($this->events, $event_object);
+		}
 	}
 
 
