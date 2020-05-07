@@ -128,10 +128,11 @@ class Personide_Public
 			remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
 		}
 
-		if (is_user_logged_in()) {
+		if (is_user_logged_in() && (is_front_page() || is_checkout())) {
 			$current_user = wp_get_current_user();
 			$customer = new WC_Customer($current_user->ID);
 			$properties = array(
+				'nativeId' => $customer->get_id(),
 				'email' => $customer->get_email(),
 				'firstName' => $customer->get_first_name(),
 				'lastName' => $customer->get_last_name(),
@@ -219,12 +220,32 @@ class Personide_Public
 	public function checkout()
 	{
 		global $wp;
+
+		if (!is_checkout()) {
+			return;
+		}
+
 		if (!isset($wp->query_vars['order-received'])) {
+			$this->logger->error("Checkout: query_vars['order-received'] is not set on checkout page... aborting.");
 			return;
 		}
 
 		$order_id = absint($wp->query_vars['order-received']);
+
+		if ($order_id == 0 || is_bool($order_id)) {
+			$this->logger->error("Checkout: order-received int value is invalid: $order_id ... aborting.", $this->context);
+			return;
+		}
+
+		$this->logger->debug("Checkout: query_vars['order-received'] = $order_id");
+
 		$order = wc_get_order($order_id);
+
+		if (is_bool($order)) {
+			$this->logger->error("Checkout: order was not found by id = $order_id ... aborting.");
+			return;
+		}
+
 		$items = $order->get_items(); // WC_Order_Item[]
 
 		function itemsToProducts($item)
