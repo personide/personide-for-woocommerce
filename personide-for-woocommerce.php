@@ -93,7 +93,6 @@ function run_personide()
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
   add_action('woocommerce_init', function () {
     $logger = wc_get_logger();
-    $logger->debug("---- Launching Personide for WooCommerce ----", array('source' => 'personide'));
     run_personide();
   });
 }

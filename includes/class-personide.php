@@ -85,7 +85,7 @@ class Personide
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
-		$this->logger->debug("Created main class instance", $this->context);
+		// $this->logger->debug("Created main class instance", $this->context);
 	}
 
 	/**
