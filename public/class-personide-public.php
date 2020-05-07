@@ -68,8 +68,6 @@ class Personide_Public
 			}
 		}
 
-		$this->logger->debug("Created public class instance", $this->context);
-
 		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-personide-util.php';
 	}
 
@@ -96,7 +94,6 @@ class Personide_Public
 		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js/".$access_token, array( 'jquery' ), null, false );
 		// $this->enqueue_js( Personide_Util::get_var_script() );
 		$this->enqueue_params("page", Personide_Util::get_pagedata('type'));
-		$this->logger->debug("Enqueued public scripts", $this->context);
 	}
 
 	public function enqueue_js($code)
@@ -178,8 +175,6 @@ class Personide_Public
 
 		$this->enqueue_params('cart', json_encode($items));
 		$this->enqueue_params('plugin_directory', plugin_dir_url(__FILE__));
-
-		$this->logger->debug("Completed execution: template_redirect handler", $this->context);
 	}
 
 
@@ -195,8 +190,6 @@ class Personide_Public
 		// wp_add_inline_script($this->plugin_name, $this->script);
 		echo '<script type="text/javascript">' . $this->script . '</script>';
 		echo $this->params_html;
-
-		$this->logger->debug("Completed execution: wp_footer handler", $this->context);
 	}
 
 
@@ -212,8 +205,6 @@ class Personide_Public
 		array_push($events, $event_object);
 		WC()->session->set($this->plugin_name . '_events', $events);
 		array_push($this->events, $event_object);
-
-		$this->logger->debug("Completed execution: woocommerce_add_to_cart handler", $this->context);
 	}
 
 
@@ -274,15 +265,9 @@ class Personide_Public
 
 		$event_object = Personide_Util::get_event('purchase', 'user', '', json_encode($properties), 'cart', $order->get_id());
 
-		// $this->logger->debug("Adding purchase event to session");
-
 		// $events = WC()->session->get($this->plugin_name . '_events');
 		array_push($this->events, $event_object);
 		// WC()->session->set($this->plugin_name . '_events', $events);
-
-
-
-		$this->logger->debug("Completed execution: woocommerce_checkout_update_order_meta handler", $this->context);
 	}
 
 
