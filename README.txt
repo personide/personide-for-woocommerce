@@ -76,3 +76,7 @@ Personide seamlessly integrates with your woocommerce store and makes your custo
 = 1.2.4 =
 
 - Fix - Remove woocommerce_thankyou dependency in favor of order-received query var
+
+= 1.2.5 =
+
+- Enhancement - Verbose checkout logging
