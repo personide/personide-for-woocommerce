@@ -204,7 +204,7 @@ class Personide_Admin
 			$this->plugin_name,
 			array($this, 'register_menu'),
 			plugin_dir_url(__FILE__) .'../assets/icon.png',
-			29
+			'56'
 		);
 	}
 
