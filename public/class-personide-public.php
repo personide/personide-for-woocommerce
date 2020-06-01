@@ -87,12 +87,9 @@ class Personide_Public
 	 */
 	public function enqueue_scripts()
 	{
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/personide-public.js', array( 'jquery' ), $this->version, false );
-
 		$access_token = Personide_Util::get_option('access_token');
 		$wpes = wp_enqueue_script($this->plugin_name, "//connect.personide.com/lib/js/" . $access_token, array('jquery'), null, false);
 		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js/".$access_token, array( 'jquery' ), null, false );
-		// $this->enqueue_js( Personide_Util::get_var_script() );
 		$this->enqueue_params("page", Personide_Util::get_pagedata('type'));
 	}
 
@@ -126,7 +123,7 @@ class Personide_Public
 		}
 
 		if (is_front_page() || is_checkout()) {
-			// $this->push_user_set_event();
+			$this->push_user_set_event();
 		}
 
 		if (is_product()) {
