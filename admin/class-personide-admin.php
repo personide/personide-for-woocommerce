@@ -55,14 +55,10 @@ class Personide_Admin
 		$this->version = $version;
 		$this->logger = wc_get_logger();
 		$this->context = array('source' => 'personide');
-
 		$this->new_products = array();
-
 		$this->default_options = array(
 			'remove_wc_related_products' => TRUE,
 		);
-
-		// $this->logger->debug("Created admin class instance", $this->context);
 
 		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-personide-util.php';
 	}
@@ -110,11 +106,7 @@ class Personide_Admin
 		 * class.
 		 */
 
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . '../public/js/personide-public.js', array( 'jquery' ), $this->version, false );
 		$access_token = get_option('access_token');
-		wp_enqueue_script($this->plugin_name, "//connect.personide.com/lib/js?id=" . $access_token, array('jquery'), null, false);
-		// wp_enqueue_script( $this->plugin_name, "//localhost:9000/lib/js?id=".$access_token, array( 'jquery' ), null, false );
-		wp_add_inline_script($this->plugin_name, Personide_Util::get_var_script());
 	}
 
 	// @todo remove if unneccessary 
@@ -205,7 +197,15 @@ class Personide_Admin
 
 	public function add_menu()
 	{
-		add_menu_page('Personide - General Settings', 'Personide', 'administrator', $this->plugin_name, array($this, 'register_menu'), plugin_dir_url(__FILE__) . '../assets/icon.png');
+		add_menu_page(
+			'Personide - General Settings',
+			'Personide',
+			'administrator',
+			$this->plugin_name,
+			array($this, 'register_menu'),
+			plugin_dir_url(__FILE__) .'../assets/icon.png',
+			10
+		);
 	}
 
 

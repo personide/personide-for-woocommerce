@@ -3,12 +3,6 @@
 
 class Personide_Util {
 
-	public static function get_var_script() {
-		return "
-		Personide.set('currentPage', '". Personide_Util::get_pagedata('type') ."')
-		";
-	}
-
 	public static function get_event($type, $entityType, $entityId, $properties = NULL, $targetEntityType = NULL, $targetEntityId = NULL) {
 		
 		$eventTime = current_time('c');

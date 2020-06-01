@@ -219,7 +219,11 @@ class Personide_Public
 	{
 		global $wp;
 
-		if (!is_checkout()) {
+		if (!(function_exists('is_checkout') && is_checkout())) {
+			return;
+		}
+
+		if (!(function_exists('is_order_received_page') && is_order_received_page())) {
 			return;
 		}
 
@@ -264,73 +268,13 @@ class Personide_Public
 		}
 
 		$items = array_values(array_map("itemsToProducts", $items));
-
 		$properties = array(
 			'items' => $items,
 			'total_amount' => $order->get_total()
 		);
-
 		$event_object = Personide_Util::get_event('purchase', 'user', '', json_encode($properties), 'cart', $order->get_id());
-
-		// $events = WC()->session->get($this->plugin_name . '_events');
 		array_push($this->events, $event_object);
-		// WC()->session->set($this->plugin_name . '_events', $events);
-	}
-
-
-	public function add_hotslot($type)
-	{
-		echo $this->get_hotslot_html($type);
-	}
-
-
-	public function get_hotslot_html($strategy = NULL)
-	{
-		$default = '
-		<h1 class="personide_hotslot-title center"></h1>
-		<div class="listing">
-		<div class="template item personide-product">
-		<a class="personide-product__link" href="">
-		<img class="personide-product__picture" src=""/>
-		<div class="personide-product__details">
-		<p class="personide-product__name"></p>
-		<p class="personide-product__price"></p>
-		</div>
-		</a>
-		</div>
-		</div>
-		';
-
-		$default_theme = Personide_Util::get_option('default_theme');
-		$template = Personide_Util::get_option('hotslot_template');
-
-		if (strlen($template) == 0) {
-			$template = $default;
-		}
-		$default_class = ($default_theme) ? 'personide-basic' : '';
-
-		return '
-		<div class="personide_container ' . $default_class . '" data-priority=1 data-container="hotslot" data-type="' . $strategy . '">
-		' . $template . '
-		</div>
-		';
-	}
-
-
-	public function hotslot_shortcode($atts)
-	{
-		$type = (is_array($atts)) ? $atts['type'] : NULL;
-		return $this->get_hotslot_html($type);
 	}
 }
-
 
 require_once plugin_dir_path(dirname(__FILE__)) . 'includes/widgets/class-personide-widget-recommendations.php';
-
-
-function widget_register()
-{
-	register_widget('Personide_Widget_Recommendations');
-}
-
-add_action('widgets_init', 'widget_register');
